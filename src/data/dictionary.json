@@ -1,0 +1,1258 @@
+[
+  {
+    "headword": "bonzour",
+    "language": "mfe",
+    "partOfSpeech": "interjection",
+    "meaningEn": "Good morning / hello",
+    "meaningFr": "Bonjour",
+    "category": "greetings",
+    "level": "beginner",
+    "pronunciation": "bon-ZOOR",
+    "examples": [
+      "Bonzour tou dimoun!",
+      "Good morning everyone!"
+    ]
+  },
+  {
+    "headword": "bonswar",
+    "language": "mfe",
+    "partOfSpeech": "interjection",
+    "meaningEn": "Good evening",
+    "meaningFr": "Bonsoir",
+    "category": "greetings",
+    "level": "beginner",
+    "pronunciation": "bon-SWAR",
+    "examples": [
+      "Bonswar, korek?",
+      "Good evening, all good?"
+    ]
+  },
+  {
+    "headword": "orevwar",
+    "language": "mfe",
+    "partOfSpeech": "interjection",
+    "meaningEn": "Goodbye",
+    "meaningFr": "Au revoir",
+    "category": "greetings",
+    "level": "beginner",
+    "pronunciation": "o-re-VWAR"
+  },
+  {
+    "headword": "mersi",
+    "language": "mfe",
+    "partOfSpeech": "interjection",
+    "meaningEn": "Thank you",
+    "meaningFr": "Merci",
+    "category": "greetings",
+    "level": "beginner",
+    "pronunciation": "mer-SEE",
+    "examples": [
+      "Mersi boukou!",
+      "Thank you very much!"
+    ]
+  },
+  {
+    "headword": "wi",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Yes",
+    "meaningFr": "Oui",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "non",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "No",
+    "meaningFr": "Non",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "zanfan",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Child",
+    "meaningFr": "Enfant",
+    "category": "family",
+    "level": "beginner",
+    "pronunciation": "zan-FAN",
+    "examples": [
+      "Zanfan-la pe dormi.",
+      "The child is sleeping."
+    ]
+  },
+  {
+    "headword": "mama",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Mother / mum",
+    "meaningFr": "Maman / mère",
+    "category": "family",
+    "level": "beginner",
+    "examples": [
+      "Mo mama dan lakwizinn.",
+      "My mum is in the kitchen."
+    ]
+  },
+  {
+    "headword": "papa",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Father / dad",
+    "meaningFr": "Papa / père",
+    "category": "family",
+    "level": "beginner"
+  },
+  {
+    "headword": "fami",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Family",
+    "meaningFr": "Famille",
+    "category": "family",
+    "level": "beginner"
+  },
+  {
+    "headword": "granper",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Grandfather",
+    "meaningFr": "Grand-père",
+    "category": "family",
+    "level": "beginner"
+  },
+  {
+    "headword": "granmer",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Grandmother",
+    "meaningFr": "Grand-mère",
+    "category": "family",
+    "level": "beginner"
+  },
+  {
+    "headword": "delo",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Water",
+    "meaningFr": "Eau",
+    "category": "food",
+    "level": "beginner",
+    "examples": [
+      "Mo swaf, mo bizin delo.",
+      "I'm thirsty, I need water."
+    ]
+  },
+  {
+    "headword": "manze",
+    "language": "mfe",
+    "partOfSpeech": "noun / verb",
+    "meaningEn": "Food / to eat",
+    "meaningFr": "Nourriture / manger",
+    "category": "food",
+    "level": "beginner",
+    "examples": [
+      "Manze la bien bon!",
+      "The food is really good!"
+    ]
+  },
+  {
+    "headword": "dipin",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Bread",
+    "meaningFr": "Pain",
+    "category": "food",
+    "level": "beginner"
+  },
+  {
+    "headword": "diri",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Rice",
+    "meaningFr": "Riz",
+    "category": "food",
+    "level": "beginner",
+    "examples": [
+      "Nou manz diri toulezour.",
+      "We eat rice every day."
+    ]
+  },
+  {
+    "headword": "dite",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Tea",
+    "meaningFr": "Thé",
+    "category": "food",
+    "level": "beginner"
+  },
+  {
+    "headword": "lakaz",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "House / home",
+    "meaningFr": "Maison",
+    "category": "general",
+    "level": "beginner",
+    "pronunciation": "la-KAZ",
+    "examples": [
+      "Mo pe al lakaz.",
+      "I'm going home."
+    ]
+  },
+  {
+    "headword": "loto",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Car",
+    "meaningFr": "Voiture",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "lisien",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Dog",
+    "meaningFr": "Chien",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "sat",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Cat",
+    "meaningFr": "Chat",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "soley",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Sun",
+    "meaningFr": "Soleil",
+    "category": "general",
+    "level": "beginner",
+    "examples": [
+      "Soley pe brile zordi.",
+      "The sun is scorching today."
+    ]
+  },
+  {
+    "headword": "lapli",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Rain",
+    "meaningFr": "Pluie",
+    "category": "general",
+    "level": "beginner",
+    "examples": [
+      "Lapli pe tonbe.",
+      "It's raining."
+    ]
+  },
+  {
+    "headword": "lamer",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Sea",
+    "meaningFr": "Mer",
+    "category": "traditional",
+    "level": "beginner",
+    "examples": [
+      "Lamer la kalm zordi.",
+      "The sea is calm today."
+    ]
+  },
+  {
+    "headword": "ale",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To go",
+    "meaningFr": "Aller",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Mo pe al travay.",
+      "I'm going to work."
+    ]
+  },
+  {
+    "headword": "vini",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To come",
+    "meaningFr": "Venir",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Vini isi!",
+      "Come here!"
+    ]
+  },
+  {
+    "headword": "gete",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To look / to watch",
+    "meaningFr": "Regarder",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Get sa!",
+      "Look at that!"
+    ]
+  },
+  {
+    "headword": "koze",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To talk / to speak",
+    "meaningFr": "Parler",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Nou koz kreol.",
+      "We speak Creole."
+    ]
+  },
+  {
+    "headword": "travay",
+    "language": "mfe",
+    "partOfSpeech": "noun / verb",
+    "meaningEn": "Work / to work",
+    "meaningFr": "Travail / travailler",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Li travay dan biro.",
+      "They work in an office."
+    ]
+  },
+  {
+    "headword": "aste",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To buy",
+    "meaningFr": "Acheter",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Mo pe al aste dipin.",
+      "I'm going to buy bread."
+    ]
+  },
+  {
+    "headword": "bwar",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To drink",
+    "meaningFr": "Boire",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "zordi",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Today",
+    "meaningFr": "Aujourd'hui",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Ki nou pe fer zordi?",
+      "What are we doing today?"
+    ]
+  },
+  {
+    "headword": "demin",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Tomorrow",
+    "meaningFr": "Demain",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "yer",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Yesterday",
+    "meaningFr": "Hier",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "aster",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Now",
+    "meaningFr": "Maintenant",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Vini aster!",
+      "Come now!"
+    ]
+  },
+  {
+    "headword": "kontan",
+    "language": "mfe",
+    "partOfSpeech": "adjective / verb",
+    "meaningEn": "Happy / to like / to love",
+    "meaningFr": "Content / aimer",
+    "category": "expressions",
+    "level": "intermediate",
+    "examples": [
+      "Mo bien kontan!",
+      "I'm very happy!"
+    ]
+  },
+  {
+    "headword": "fatige",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Tired",
+    "meaningFr": "Fatigué",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Mo bien fatige zordi.",
+      "I'm very tired today."
+    ]
+  },
+  {
+    "headword": "gran",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Big / tall",
+    "meaningFr": "Grand",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "tipti",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Small / little",
+    "meaningFr": "Petit",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "semin",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Road / path / way",
+    "meaningFr": "Chemin / route",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "montany",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Mountain",
+    "meaningFr": "Montagne",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "kas",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Money / cash",
+    "meaningFr": "Argent",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Mo nepli ena kas.",
+      "I've got no money left."
+    ]
+  },
+  {
+    "headword": "bazar",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Market",
+    "meaningFr": "Marché",
+    "category": "traditional",
+    "level": "intermediate",
+    "examples": [
+      "Mo pe al bazar aste legim.",
+      "I'm going to the market to buy vegetables."
+    ]
+  },
+  {
+    "headword": "fer so malin",
+    "language": "mfe",
+    "partOfSpeech": "expression",
+    "meaningEn": "To act clever / to show off",
+    "meaningFr": "Faire le malin",
+    "category": "expressions",
+    "level": "advanced",
+    "pronunciation": "fer so ma-LIN",
+    "examples": [
+      "Aret fer to malin!",
+      "Stop showing off!"
+    ]
+  },
+  {
+    "headword": "ki pe fer",
+    "language": "mfe",
+    "partOfSpeech": "expression",
+    "meaningEn": "What's up? / how's it going?",
+    "meaningFr": "Quoi de neuf ?",
+    "category": "slang",
+    "level": "advanced",
+    "examples": [
+      "Ki pe fer mo dalon?",
+      "What's up my friend?"
+    ]
+  },
+  {
+    "headword": "mari",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Very / really (intensifier)",
+    "meaningFr": "Très / vraiment",
+    "category": "slang",
+    "level": "advanced",
+    "examples": [
+      "Sa mari bon sa!",
+      "That's really good!"
+    ]
+  },
+  {
+    "headword": "korek",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Okay / fine / alright",
+    "meaningFr": "Correct / ça va",
+    "category": "slang",
+    "level": "advanced",
+    "examples": [
+      "Tou korek?",
+      "Everything okay?"
+    ]
+  },
+  {
+    "headword": "zafer",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Thing / stuff / matter",
+    "meaningFr": "Chose / affaire",
+    "category": "general",
+    "level": "advanced",
+    "examples": [
+      "Ki zafer sa?",
+      "What is this thing?"
+    ]
+  },
+  {
+    "headword": "gagn",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To get / to obtain / to manage",
+    "meaningFr": "Obtenir / réussir",
+    "category": "general",
+    "level": "advanced",
+    "examples": [
+      "Mo finn gagn travay.",
+      "I got a job."
+    ]
+  },
+  {
+    "headword": "deza",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Already",
+    "meaningFr": "Déjà",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "touletan",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Always / all the time",
+    "meaningFr": "Tout le temps",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "kamarad",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Friend / mate",
+    "meaningFr": "Ami / camarade",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "baba",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Baby / darling (term of endearment)",
+    "meaningFr": "Bébé / chéri",
+    "category": "expressions",
+    "level": "advanced"
+  },
+  {
+    "headword": "sega",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Sega — traditional Mauritian music and dance",
+    "meaningFr": "Séga — musique et danse traditionnelles",
+    "category": "traditional",
+    "level": "advanced",
+    "examples": [
+      "Nou danse sega dan laplaz.",
+      "We dance sega on the beach."
+    ]
+  },
+  {
+    "headword": "gato pima",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Chilli cakes — popular street-food snack",
+    "meaningFr": "Beignets de pois chiches pimentés",
+    "category": "food",
+    "level": "advanced",
+    "examples": [
+      "Enn gato pima siouple!",
+      "One chilli cake please!"
+    ]
+  },
+  {
+    "headword": "laniverser",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Birthday",
+    "meaningFr": "Anniversaire",
+    "category": "general",
+    "level": "beginner",
+    "examples": [
+      "Zordi mo laniverser.",
+      "Today is my birthday."
+    ]
+  },
+  {
+    "headword": "liniver",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Universe",
+    "meaningFr": "Univers",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "soulie",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Shoe / shoes",
+    "meaningFr": "Chaussure",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "kreyon",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Pencil",
+    "meaningFr": "Crayon",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "gato",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Cake",
+    "meaningFr": "Gâteau",
+    "category": "food",
+    "level": "beginner",
+    "examples": [
+      "Enn gato laniverser.",
+      "A birthday cake."
+    ]
+  },
+  {
+    "headword": "desin",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Drawing",
+    "meaningFr": "Dessin",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "dile",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Milk",
+    "meaningFr": "Lait",
+    "category": "food",
+    "level": "beginner"
+  },
+  {
+    "headword": "dimounn",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Person / people",
+    "meaningFr": "Personne / gens",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "ledwa",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Finger",
+    "meaningFr": "Doigt",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "kado",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Gift / present",
+    "meaningFr": "Cadeau",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "liv",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Book",
+    "meaningFr": "Livre",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "kari",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Curry",
+    "meaningFr": "Cari",
+    "category": "food",
+    "level": "beginner",
+    "examples": [
+      "Kari poul ek diri.",
+      "Chicken curry with rice."
+    ]
+  },
+  {
+    "headword": "klas",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Class / classroom",
+    "meaningFr": "Classe",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "panie",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Basket",
+    "meaningFr": "Panier",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "piknik",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Picnic",
+    "meaningFr": "Pique-nique",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "lake",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Tail",
+    "meaningFr": "Queue",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "bwat",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Box",
+    "meaningFr": "Boîte",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "lagitar",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Guitar",
+    "meaningFr": "Guitare",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "sapo",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Hat",
+    "meaningFr": "Chapeau",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "sokola",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Chocolate",
+    "meaningFr": "Chocolat",
+    "category": "food",
+    "level": "beginner"
+  },
+  {
+    "headword": "zanimo",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Animal",
+    "meaningFr": "Animal",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "kamera",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Camera",
+    "meaningFr": "Caméra",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "gro",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Big / fat",
+    "meaningFr": "Gros",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "baton",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Stick",
+    "meaningFr": "Bâton",
+    "category": "general",
+    "level": "beginner"
+  },
+  {
+    "headword": "pie",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Tree / plant",
+    "meaningFr": "Arbre / plante",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Enn pie mang.",
+      "A mango tree."
+    ]
+  },
+  {
+    "headword": "kanet",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Marble (toy)",
+    "meaningFr": "Bille",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "zistwar",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Story",
+    "meaningFr": "Histoire",
+    "category": "general",
+    "level": "intermediate",
+    "examples": [
+      "Rakont mwa enn zistwar.",
+      "Tell me a story."
+    ]
+  },
+  {
+    "headword": "bato",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Boat / ship",
+    "meaningFr": "Bateau",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "bonnfam",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Woman / old lady (informal)",
+    "meaningFr": "Femme / vieille dame",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "reponn",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To answer / to reply",
+    "meaningFr": "Répondre",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "konpran",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To understand",
+    "meaningFr": "Comprendre",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "sorsier",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Witch",
+    "meaningFr": "Sorcière",
+    "category": "traditional",
+    "level": "intermediate"
+  },
+  {
+    "headword": "zour",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Day",
+    "meaningFr": "Jour",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "pran",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To take",
+    "meaningFr": "Prendre",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "fini",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To finish / finished",
+    "meaningFr": "Finir",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "pavion",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Flag",
+    "meaningFr": "Drapeau",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "demann",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To ask (for)",
+    "meaningFr": "Demander",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "ros",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Rock / stone",
+    "meaningFr": "Roche / pierre",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "vie",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Old",
+    "meaningFr": "Vieux",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "lil",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Island",
+    "meaningFr": "Île",
+    "category": "traditional",
+    "level": "intermediate",
+    "examples": [
+      "Moris se enn zoli lil.",
+      "Mauritius is a beautiful island."
+    ]
+  },
+  {
+    "headword": "madam",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Lady / madam / Mrs",
+    "meaningFr": "Madame",
+    "category": "family",
+    "level": "intermediate"
+  },
+  {
+    "headword": "frer",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Brother",
+    "meaningFr": "Frère",
+    "category": "family",
+    "level": "intermediate"
+  },
+  {
+    "headword": "pwason",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Fish",
+    "meaningFr": "Poisson",
+    "category": "food",
+    "level": "intermediate"
+  },
+  {
+    "headword": "fet",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Party / celebration / festival",
+    "meaningFr": "Fête",
+    "category": "traditional",
+    "level": "intermediate"
+  },
+  {
+    "headword": "tann",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To hear",
+    "meaningFr": "Entendre",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "zoli",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Pretty / beautiful",
+    "meaningFr": "Joli / beau",
+    "category": "general",
+    "level": "intermediate"
+  },
+  {
+    "headword": "servolan",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Kite",
+    "meaningFr": "Cerf-volant",
+    "category": "general",
+    "level": "advanced",
+    "examples": [
+      "Zanfan pe fer vole servolan.",
+      "The children are flying a kite."
+    ]
+  },
+  {
+    "headword": "laplaz",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Beach",
+    "meaningFr": "Plage",
+    "category": "traditional",
+    "level": "advanced",
+    "examples": [
+      "Nou al laplaz dimans.",
+      "We go to the beach on Sundays."
+    ]
+  },
+  {
+    "headword": "boukou",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "A lot / many",
+    "meaningFr": "Beaucoup",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "long",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Long",
+    "meaningFr": "Long",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "kourt",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Short",
+    "meaningFr": "Court",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "marse",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To walk",
+    "meaningFr": "Marcher",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "bienveni",
+    "language": "mfe",
+    "partOfSpeech": "interjection",
+    "meaningEn": "Welcome",
+    "meaningFr": "Bienvenue",
+    "category": "greetings",
+    "level": "advanced"
+  },
+  {
+    "headword": "larenion",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Réunion (island)",
+    "meaningFr": "La Réunion",
+    "category": "traditional",
+    "level": "advanced"
+  },
+  {
+    "headword": "komie",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "How much / how many",
+    "meaningFr": "Combien",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "karanbol",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Carambola / star fruit",
+    "meaningFr": "Carambole",
+    "category": "food",
+    "level": "advanced"
+  },
+  {
+    "headword": "letan",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Time / weather",
+    "meaningFr": "Le temps",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "vwayaz",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Trip / journey",
+    "meaningFr": "Voyage",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "konte",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To count / to tell",
+    "meaningFr": "Compter",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "sinp",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Simple / easy",
+    "meaningFr": "Simple",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "laboutik",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Shop / small grocery",
+    "meaningFr": "Boutique",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "koumans",
+    "language": "mfe",
+    "partOfSpeech": "verb",
+    "meaningEn": "To begin / to start",
+    "meaningFr": "Commencer",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "ansam",
+    "language": "mfe",
+    "partOfSpeech": "adverb",
+    "meaningEn": "Together",
+    "meaningFr": "Ensemble",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "piti",
+    "language": "mfe",
+    "partOfSpeech": "adjective",
+    "meaningEn": "Small / little / child",
+    "meaningFr": "Petit",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "lekip",
+    "language": "mfe",
+    "partOfSpeech": "noun",
+    "meaningEn": "Team",
+    "meaningFr": "Équipe",
+    "category": "general",
+    "level": "advanced"
+  },
+  {
+    "headword": "plizier",
+    "language": "mfe",
+    "partOfSpeech": "determiner",
+    "meaningEn": "Several",
+    "meaningFr": "Plusieurs",
+    "category": "general",
+    "level": "advanced"
+  }
+]

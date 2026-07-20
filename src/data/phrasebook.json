@@ -1,0 +1,147 @@
+[
+  {
+    "en": "i'm very tired today",
+    "fr": "je suis très fatigué aujourd'hui",
+    "mfe": "mo bien fatige zordi",
+    "register": "casual",
+    "level": "intermediate"
+  },
+  {
+    "en": "what's up",
+    "fr": "quoi de neuf",
+    "mfe": "ki pe fer",
+    "register": "slang",
+    "level": "advanced",
+    "note": "Casual greeting between friends, not used with elders or strangers."
+  },
+  {
+    "en": "how are you",
+    "fr": "comment vas-tu",
+    "mfe": "kouma to ete",
+    "register": "casual",
+    "level": "beginner"
+  },
+  {
+    "en": "i am very happy to meet you",
+    "fr": "je suis très heureux de vous rencontrer",
+    "mfe": "mo bien kontan zwenn twa",
+    "register": "casual",
+    "level": "intermediate",
+    "note": "Warm and natural; the formal French flattens into everyday Creole."
+  },
+  {
+    "en": "good morning",
+    "fr": "bonjour",
+    "mfe": "bonzour",
+    "register": "casual",
+    "level": "beginner"
+  },
+  {
+    "en": "good night",
+    "fr": "bonne nuit",
+    "mfe": "bonn nwit",
+    "level": "beginner"
+  },
+  {
+    "en": "thank you very much",
+    "fr": "merci beaucoup",
+    "mfe": "mersi boukou",
+    "level": "beginner"
+  },
+  {
+    "en": "i don't understand",
+    "fr": "je ne comprends pas",
+    "mfe": "mo pa konpran",
+    "level": "beginner"
+  },
+  {
+    "en": "where are you going",
+    "fr": "où vas-tu",
+    "mfe": "kot to pe ale",
+    "register": "casual",
+    "level": "intermediate"
+  },
+  {
+    "en": "he is acting clever",
+    "fr": "il fait le malin",
+    "mfe": "li pe fer so malin",
+    "register": "slang",
+    "level": "advanced",
+    "note": "Often said jokingly about someone showing off."
+  },
+  {
+    "en": "see you tomorrow",
+    "fr": "à demain",
+    "mfe": "aswar demin",
+    "level": "intermediate"
+  },
+  {
+    "en": "i love you",
+    "fr": "je t'aime",
+    "mfe": "mo kontan twa",
+    "level": "intermediate"
+  },
+  {
+    "en": "please",
+    "fr": "s'il te plaît",
+    "mfe": "siouple",
+    "level": "beginner"
+  },
+  {
+    "en": "excuse me",
+    "fr": "excuse-moi",
+    "mfe": "eskiz mwa",
+    "level": "beginner"
+  },
+  {
+    "en": "i am hungry",
+    "fr": "j'ai faim",
+    "mfe": "mo grangou",
+    "level": "intermediate"
+  },
+  {
+    "en": "i am thirsty",
+    "fr": "j'ai soif",
+    "mfe": "mo swaf",
+    "level": "intermediate"
+  },
+  {
+    "en": "what is your name",
+    "fr": "comment tu t'appelles",
+    "mfe": "ki to non",
+    "register": "casual",
+    "level": "beginner"
+  },
+  {
+    "en": "i don't know",
+    "fr": "je ne sais pas",
+    "mfe": "mo pa kone",
+    "level": "intermediate"
+  },
+  {
+    "en": "no problem",
+    "fr": "pas de problème",
+    "mfe": "pena problem",
+    "level": "intermediate"
+  },
+  {
+    "en": "let's go",
+    "fr": "allons-y",
+    "mfe": "anou ale",
+    "register": "casual",
+    "level": "intermediate"
+  },
+  {
+    "en": "come here",
+    "fr": "viens ici",
+    "mfe": "vini isi",
+    "register": "casual",
+    "level": "beginner"
+  },
+  {
+    "en": "i am going home",
+    "fr": "je rentre à la maison",
+    "mfe": "mo pe al lakaz",
+    "level": "intermediate"
+  }
+]

@@ -1,0 +1,235 @@
+// Lalang database schema
+// Provider: PostgreSQL. Run `npm run db:migrate` to apply.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum Language {
+  EN
+  FR
+  MFE // Mauritian Creole
+}
+
+enum Register {
+  CASUAL
+  BUSINESS
+  SCHOOL
+  TOURISM
+  SOCIAL
+  FORMAL
+  SLANG
+}
+
+enum Engine {
+  AI
+  DICTIONARY
+}
+
+enum DictionaryCategory {
+  FOOD
+  FAMILY
+  GREETINGS
+  EXPRESSIONS
+  SLANG
+  TRADITIONAL
+  GENERAL
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ---------------------------------------------------------------------------
+// Auth (NextAuth / Auth.js)
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+
+  accounts     Account[]
+  sessions     Session[]
+  translations Translation[]
+  favorites    Favorite[]
+  feedback     Feedback[]
+  suggestions  TranslationSuggestion[]
+  votes        Vote[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Translation domain
+// ---------------------------------------------------------------------------
+
+model Translation {
+  id         String   @id @default(cuid())
+  userId     String?
+  sourceText String
+  resultText String
+  sourceLang Language
+  targetLang Language
+  register   Register @default(CASUAL)
+  engine     Engine   @default(DICTIONARY)
+  createdAt  DateTime @default(now())
+
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  favorites Favorite[]
+  feedback  Feedback[]
+
+  @@index([userId])
+  @@index([sourceLang, targetLang])
+}
+
+model Favorite {
+  id            String   @id @default(cuid())
+  userId        String
+  translationId String
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  translation Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, translationId])
+}
+
+model Feedback {
+  id            String   @id @default(cuid())
+  userId        String?
+  translationId String?
+  rating        Int // 1..5, or -1/1 for thumbs
+  comment       String?
+  createdAt     DateTime @default(now())
+
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  translation Translation? @relation(fields: [translationId], references: [id], onDelete: SetNull)
+}
+
+// ---------------------------------------------------------------------------
+// Cultural dictionary
+// ---------------------------------------------------------------------------
+
+model DictionaryEntry {
+  id           String             @id @default(cuid())
+  headword     String
+  language     Language
+  partOfSpeech String?
+  meaningEn    String
+  meaningFr    String?
+  category     DictionaryCategory @default(GENERAL)
+  level        Level              @default(BEGINNER)
+  pronunciation String?
+  examples     String[]
+  approved     Boolean            @default(true)
+  createdById  String?
+  createdAt    DateTime           @default(now())
+
+  dailyWords DailyWord[]
+
+  @@unique([headword, language])
+  @@index([category])
+  @@index([level])
+}
+
+model DailyWord {
+  id      String   @id @default(cuid())
+  date    DateTime @unique @db.Date
+  entryId String
+  entry   DictionaryEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------------
+// Community improvement + moderation
+// ---------------------------------------------------------------------------
+
+model TranslationSuggestion {
+  id            String           @id @default(cuid())
+  createdById   String
+  sourceText    String
+  sourceLang    Language
+  targetLang    Language
+  suggestedText String
+  note          String?
+  status        SuggestionStatus @default(PENDING)
+  createdAt     DateTime         @default(now())
+
+  createdBy User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  votes     Vote[]
+
+  @@index([status])
+}
+
+model Vote {
+  id           String @id @default(cuid())
+  userId       String
+  suggestionId String
+  value        Int // +1 or -1
+
+  user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  suggestion TranslationSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, suggestionId])
+}

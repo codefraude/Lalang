@@ -1,0 +1,200 @@
+[
+  {
+    "en": "yes",
+    "fr": "oui",
+    "mfe": "wi",
+    "level": "beginner"
+  },
+  {
+    "en": "no",
+    "fr": "non",
+    "mfe": "non",
+    "level": "beginner"
+  },
+  {
+    "en": "water",
+    "fr": "eau",
+    "mfe": "delo",
+    "level": "beginner"
+  },
+  {
+    "en": "food",
+    "fr": "nourriture",
+    "mfe": "manze",
+    "level": "beginner"
+  },
+  {
+    "en": "child",
+    "fr": "enfant",
+    "mfe": "zanfan",
+    "level": "beginner"
+  },
+  {
+    "en": "house",
+    "fr": "maison",
+    "mfe": "lakaz",
+    "level": "beginner"
+  },
+  {
+    "en": "friend",
+    "fr": "ami",
+    "mfe": "kamarad",
+    "level": "beginner"
+  },
+  {
+    "en": "today",
+    "fr": "aujourd'hui",
+    "mfe": "zordi",
+    "level": "intermediate"
+  },
+  {
+    "en": "tired",
+    "fr": "fatigué",
+    "mfe": "fatige",
+    "level": "intermediate"
+  },
+  {
+    "en": "happy",
+    "fr": "heureux",
+    "mfe": "kontan",
+    "level": "intermediate"
+  },
+  {
+    "en": "money",
+    "fr": "argent",
+    "mfe": "kas",
+    "level": "intermediate"
+  },
+  {
+    "en": "sea",
+    "fr": "mer",
+    "mfe": "lamer",
+    "level": "beginner"
+  },
+  {
+    "en": "bread",
+    "fr": "pain",
+    "mfe": "dipin",
+    "level": "beginner"
+  },
+  {
+    "en": "rice",
+    "fr": "riz",
+    "mfe": "diri",
+    "level": "beginner"
+  },
+  {
+    "en": "tea",
+    "fr": "thé",
+    "mfe": "dite",
+    "level": "beginner"
+  },
+  {
+    "en": "sun",
+    "fr": "soleil",
+    "mfe": "soley",
+    "level": "beginner"
+  },
+  {
+    "en": "rain",
+    "fr": "pluie",
+    "mfe": "lapli",
+    "level": "beginner"
+  },
+  {
+    "en": "car",
+    "fr": "voiture",
+    "mfe": "loto",
+    "level": "beginner"
+  },
+  {
+    "en": "dog",
+    "fr": "chien",
+    "mfe": "lisien",
+    "level": "beginner"
+  },
+  {
+    "en": "cat",
+    "fr": "chat",
+    "mfe": "sat",
+    "level": "beginner"
+  },
+  {
+    "en": "father",
+    "fr": "père",
+    "mfe": "papa",
+    "level": "beginner"
+  },
+  {
+    "en": "mother",
+    "fr": "mère",
+    "mfe": "mama",
+    "level": "beginner"
+  },
+  {
+    "en": "market",
+    "fr": "marché",
+    "mfe": "bazar",
+    "level": "intermediate"
+  },
+  {
+    "en": "work",
+    "fr": "travail",
+    "mfe": "travay",
+    "level": "intermediate"
+  },
+  {
+    "en": "big",
+    "fr": "grand",
+    "mfe": "gran",
+    "level": "intermediate"
+  },
+  {
+    "en": "small",
+    "fr": "petit",
+    "mfe": "tipti",
+    "level": "intermediate"
+  },
+  {
+    "en": "tomorrow",
+    "fr": "demain",
+    "mfe": "demin",
+    "level": "intermediate"
+  },
+  {
+    "en": "now",
+    "fr": "maintenant",
+    "mfe": "aster",
+    "level": "intermediate"
+  },
+  {
+    "en": "to go",
+    "fr": "aller",
+    "mfe": "ale",
+    "level": "intermediate"
+  },
+  {
+    "en": "to eat",
+    "fr": "manger",
+    "mfe": "manze",
+    "level": "intermediate"
+  },
+  {
+    "en": "to sleep",
+    "fr": "dormir",
+    "mfe": "dormi",
+    "level": "intermediate"
+  },
+  {
+    "en": "good",
+    "fr": "bon",
+    "mfe": "bon",
+    "level": "beginner"
+  },
+  {
+    "en": "beautiful",
+    "fr": "beau",
+    "mfe": "zoli",
+    "level": "intermediate"
+  }
+]
