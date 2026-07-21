@@ -1,76 +1,63 @@
 "use client";
 
 import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeftRight, Copy, Check, Volume2, Loader2, Sparkles } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { Bot, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { useTranslate } from "@/hooks/use-translate";
-import { cn } from "@/lib/utils";
-import {
-  LANGUAGES,
-  LANGUAGE_META,
-  REGISTERS,
-  REGISTER_META,
-  type Language,
-  type Register,
-  type SourceSelection,
-} from "@/types/translation";
+import { useSpeak } from "@/hooks/use-speak";
+import { useTranslatorHistory, type HistoryItem } from "@/hooks/use-translator-history";
+import { LangBar } from "@/components/translator/lang-bar";
+import { ModePicker } from "@/components/translator/mode-picker";
+import { TranslatorInput } from "@/components/translator/translator-input";
+import { TranslatorOutput } from "@/components/translator/translator-output";
+import { ResultActions } from "@/components/translator/result-actions";
+import { AssistantPanel, type AssistantMessage } from "@/components/translator/assistant-panel";
+import { HistoryDrawer } from "@/components/translator/history-drawer";
+import type { Language, Register, SourceSelection } from "@/types/translation";
 
-const MAX = 1000;
-
-const SPEECH_LOCALE: Record<Language, string> = {
-  en: "en-GB",
-  fr: "fr-FR",
-  mfe: "fr-FR", // best-available proxy for browser TTS
-};
-
-function LanguageSelect({
-  value,
-  onChange,
-  includeAuto,
-}: {
-  value: SourceSelection;
-  onChange: (v: SourceSelection) => void;
-  includeAuto?: boolean;
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as SourceSelection)}
-      className="h-9 rounded-lg border border-input bg-background px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {includeAuto && <option value="auto">🌐 Detect language</option>}
-      {LANGUAGES.map((code) => (
-        <option key={code} value={code}>
-          {LANGUAGE_META[code].flag} {LANGUAGE_META[code].nativeLabel}
-        </option>
-      ))}
-    </select>
-  );
-}
+const MAX = 2000;
+const LABELS: Record<string, string> = { explain: "Explanation", alternatives: "Alternatives", grammar: "Grammar breakdown" };
 
 export function TranslatorPanel() {
   const [source, setSource] = React.useState<SourceSelection>("auto");
   const [target, setTarget] = React.useState<Language>("mfe");
   const [register, setRegister] = React.useState<Register>("casual");
-  const [text, setText] = React.useState("I'm very tired today");
+  const [text, setText] = React.useState("");
   const [copied, setCopied] = React.useState(false);
+  const [assistantOpen, setAssistantOpen] = React.useState(false);
+  const [assistantLoading, setAssistantLoading] = React.useState(false);
+  const [messages, setMessages] = React.useState<AssistantMessage[]>([]);
+  const [historyOpen, setHistoryOpen] = React.useState(false);
 
   const { result, loading, error, translate } = useTranslate();
+  const { speak } = useSpeak();
   const toast = useToast();
+  const history = useTranslatorHistory();
+
+  const run = (over?: Partial<{ text: string; source: SourceSelection; target: Language; register: Register }>) =>
+    translate({ text: over?.text ?? text, source: over?.source ?? source, target: over?.target ?? target, register: over?.register ?? register });
+
+  // Persist every completed translation to local history (deduped in the hook).
+  React.useEffect(() => {
+    if (result) history.add({ sourceText: result.sourceText, resultText: result.resultText, source: result.source, target: result.target, register: result.register });
+    setMessages([]);
+    setAssistantOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
+
+  const current = React.useMemo(
+    () => (result ? history.items.find((i) => i.resultText === result.resultText && i.source === result.source && i.target === result.target) : undefined),
+    [history.items, result],
+  );
 
   const swap = () => {
     if (source === "auto") return;
-    const prevSource = source;
     setSource(target);
-    setTarget(prevSource);
+    setTarget(source);
     if (result) setText(result.resultText);
   };
-
-  const onTranslate = () => translate({ text, source, target, register });
 
   const copy = async () => {
     if (!result) return;
@@ -80,161 +67,118 @@ export function TranslatorPanel() {
     setTimeout(() => setCopied(false), 1500);
   };
 
-  const speak = () => {
-    if (!result || typeof window === "undefined") return;
-    const utter = new SpeechSynthesisUtterance(result.resultText);
-    utter.lang = SPEECH_LOCALE[result.target];
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utter);
+  const askAssistant = async (task: "explain" | "alternatives" | "grammar" | "ask", question?: string) => {
+    if (!result) return;
+    setAssistantOpen(true);
+    setAssistantLoading(true);
+    try {
+      const res = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task, sourceText: result.sourceText, resultText: result.resultText, source: result.source, target: result.target, question }),
+      });
+      const data = await res.json();
+      const id = `${task}-${Date.now()}`;
+      const label = task === "ask" ? question ?? "Question" : LABELS[task];
+      if (!res.ok) setMessages((m) => [...m, { id, label, text: data.error ?? "The assistant is unavailable right now." }]);
+      else setMessages((m) => [...m, { id, label, text: data.text, alternatives: data.alternatives }]);
+    } catch {
+      setMessages((m) => [...m, { id: `err-${Date.now()}`, label: "Error", text: "Network error. Please try again." }]);
+    } finally {
+      setAssistantLoading(false);
+    }
+  };
+
+  const restore = (item: HistoryItem) => {
+    setText(item.sourceText);
+    setSource(item.source);
+    setTarget(item.target);
+    setRegister(item.register);
+    setHistoryOpen(false);
+    run({ text: item.sourceText, source: item.source, target: item.target, register: item.register });
   };
 
   return (
     <div className="w-full">
-      {/* Language bar */}
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <LanguageSelect value={source} onChange={setSource} includeAuto />
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Swap languages"
-          onClick={swap}
-          disabled={source === "auto"}
-          className="shrink-0"
-        >
-          <ArrowLeftRight />
+      <div className="mb-3 flex items-center gap-2">
+        <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)} className="shrink-0">
+          <Clock className="size-4" /> History
         </Button>
-        <LanguageSelect
-          value={target}
-          onChange={(v) => setTarget(v as Language)}
-        />
+        <div className="flex-1">
+          <LangBar source={source} target={target} onSource={setSource} onTarget={setTarget} onSwap={swap} />
+        </div>
+        <Button variant={assistantOpen ? "default" : "outline"} size="sm" onClick={() => setAssistantOpen((o) => !o)} disabled={!result} className="shrink-0">
+          <Bot className="size-4" /> <span className="hidden sm:inline">Assistant</span>
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Input */}
-        <Card>
-          <CardContent className="p-4">
-            <Textarea
-              value={text}
-              maxLength={MAX}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Type something in English, French or Creole…"
-              className="min-h-[180px] border-0 p-0 focus-visible:ring-0"
+      <div className="mb-4">
+        <ModePicker value={register} onChange={(r) => setRegister(r)} />
+      </div>
+
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="min-w-0 flex-1">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TranslatorInput value={text} onChange={setText} sourceLang={source} max={MAX} onSubmit={() => text.trim() && run()} />
+            <TranslatorOutput
+              result={result}
+              loading={loading}
+              error={error}
+              onRetry={() => run()}
+              onExample={setText}
+              actions={
+                result ? (
+                  <ResultActions
+                    isFavorite={Boolean(current?.favorite)}
+                    copied={copied}
+                    speaking={false}
+                    busy={assistantLoading}
+                    onCopy={copy}
+                    onSpeak={(rate) => speak(result.resultText, result.target, rate)}
+                    onFavorite={() => current && history.toggleFavorite(current.id)}
+                    onAgain={() => run()}
+                    onRewrite={(r) => { setRegister(r); run({ register: r }); }}
+                    onAssistant={askAssistant}
+                  />
+                ) : null
+              }
             />
-            <div className="mt-3 flex items-center justify-between border-t pt-3">
-              <span className="text-xs text-muted-foreground">
-                {text.length}/{MAX}
-              </span>
-              <RegisterSelect value={register} onChange={setRegister} />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Output */}
-        <Card className="relative bg-muted/40 shadow-md">
-          <CardContent className="flex min-h-[180px] flex-col p-4">
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-1 items-center justify-center text-muted-foreground"
-                >
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                  Translating…
-                </motion.div>
-              ) : result ? (
-                <motion.div
-                  key={result.resultText}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-1 flex-col"
-                >
-                  <p className="flex-1 text-lg leading-relaxed">{result.resultText}</p>
-                  {result.culturalNote && (
-                    <p className="mt-3 rounded-lg bg-accent/10 px-3 py-2 text-sm text-muted-foreground">
-                      💡 {result.culturalNote}
-                    </p>
-                  )}
-                </motion.div>
-              ) : (
-                <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-                  Your translation will appear here.
-                </div>
-              )}
-            </AnimatePresence>
+          <div className="mt-5 flex justify-center">
+            <Button size="lg" onClick={() => run()} loading={loading} disabled={!text.trim()}>
+              {!loading && <Sparkles />} Translate
+            </Button>
+          </div>
+        </div>
 
-            {result && !loading && (
-              <div className="mt-3 flex items-center justify-between border-t pt-3">
-                <EngineBadge engine={result.engine} />
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" aria-label="Listen" onClick={speak}>
-                    <Volume2 />
-                  </Button>
-                  <Button variant="ghost" size="icon" aria-label="Copy" onClick={copy}>
-                    {copied ? <Check className="text-primary" /> : <Copy />}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <AnimatePresence>
+          {assistantOpen && (
+            <AssistantPanel
+              open={assistantOpen}
+              onClose={() => setAssistantOpen(false)}
+              loading={assistantLoading}
+              messages={messages}
+              onAsk={(q) => askAssistant("ask", q)}
+              onUseAlternative={(t) => { navigator.clipboard.writeText(t); toast({ title: "Copied alternative", variant: "success" }); }}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
-      {error && (
-        <p
-          role="alert"
-          className="mt-3 rounded-[calc(var(--radius)-0.25rem)] border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-        >
-          {error}
-        </p>
-      )}
-
-      <div className="mt-5 flex justify-center">
-        <Button size="lg" onClick={onTranslate} loading={loading} disabled={!text.trim()}>
-          {!loading && <Sparkles />}
-          Translate
-        </Button>
-      </div>
+      <AnimatePresence>
+        {historyOpen && (
+          <HistoryDrawer
+            open={historyOpen}
+            onClose={() => setHistoryOpen(false)}
+            items={history.items}
+            onRestore={restore}
+            onToggleFavorite={history.toggleFavorite}
+            onRemove={history.remove}
+            onClear={history.clear}
+          />
+        )}
+      </AnimatePresence>
     </div>
-  );
-}
-
-function RegisterSelect({
-  value,
-  onChange,
-}: {
-  value: Register;
-  onChange: (v: Register) => void;
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as Register)}
-      className="h-8 rounded-lg border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      title="Translation context"
-    >
-      {REGISTERS.map((r) => (
-        <option key={r} value={r}>
-          {REGISTER_META[r].label}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function EngineBadge({ engine }: { engine: "ai" | "dictionary" }) {
-  return (
-    <span
-      className={cn(
-        "rounded-full px-2 py-0.5 text-[11px] font-medium",
-        engine === "ai"
-          ? "bg-primary/10 text-primary"
-          : "bg-secondary text-secondary-foreground",
-      )}
-    >
-      {engine === "ai" ? "✨ AI translation" : "📖 Dictionary"}
-    </span>
   );
 }

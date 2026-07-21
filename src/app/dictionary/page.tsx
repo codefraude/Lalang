@@ -1,68 +1,77 @@
 "use client";
 
 import * as React from "react";
-import { Search, BookOpen } from "lucide-react";
+import { motion } from "framer-motion";
+import { BookOpen } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
-import { EntryCard, type DictionaryEntry } from "@/components/dictionary/entry-card";
-import { LEVELS, LEVEL_META, type Level } from "@/types/translation";
+import { AuroraBackdrop } from "@/components/learn/aurora-backdrop";
+import { ScrollProgress } from "@/components/learn/scroll-progress";
+import { CountUp } from "@/components/learn/count-up";
+import { containerStagger } from "@/components/learn/motion";
+import { WordSpotlight } from "@/components/dictionary/word-spotlight";
+import { DictToolbar } from "@/components/dictionary/dict-toolbar";
+import { EntryCard } from "@/components/dictionary/entry-card";
+import { DICTIONARY_ENTRIES } from "@/services/translation";
+import { LEVELS } from "@/types/translation";
 
-const CATEGORIES = [
-  "all",
-  "food",
-  "family",
-  "greetings",
-  "expressions",
-  "slang",
-  "traditional",
-  "general",
-] as const;
+const ENTRIES = DICTIONARY_ENTRIES;
+const PAGE_SIZE = 24;
+const LEVEL_RANK: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 };
 
-const LEVEL_FILTERS = ["all", ...LEVELS] as const;
-const PAGE_SIZE = 12;
+const CATEGORY_COUNTS: Record<string, number> = ENTRIES.reduce(
+  (acc, e) => ((acc[e.category] = (acc[e.category] ?? 0) + 1), acc),
+  { all: ENTRIES.length } as Record<string, number>,
+);
+const WITH_EXAMPLES = ENTRIES.filter((e) => e.examples?.length).length;
+
+function Stat({ value, label }: { value: number; label: string }) {
+  return (
+    <div>
+      <p className="font-display text-2xl font-bold">
+        <CountUp to={value} />
+      </p>
+      <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+    </div>
+  );
+}
 
 export default function DictionaryPage() {
   const [q, setQ] = React.useState("");
-  const [category, setCategory] = React.useState<(typeof CATEGORIES)[number]>("all");
-  const [level, setLevel] = React.useState<(typeof LEVEL_FILTERS)[number]>("all");
-  const [entries, setEntries] = React.useState<DictionaryEntry[]>([]);
-  const [loading, setLoading] = React.useState(false);
+  const [category, setCategory] = React.useState("all");
+  const [level, setLevel] = React.useState("all");
+  const [sort, setSort] = React.useState("az");
   const [page, setPage] = React.useState(1);
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
-  const visible = React.useMemo(
-    () => (level === "all" ? entries : entries.filter((e) => e.level === level)),
-    [entries, level],
-  );
+  const filtered = React.useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return ENTRIES.filter((e) => {
+      if (category !== "all" && e.category !== category) return false;
+      if (level !== "all" && e.level !== level) return false;
+      if (!needle) return true;
+      return (
+        e.headword.toLowerCase().includes(needle) ||
+        e.meaningEn.toLowerCase().includes(needle) ||
+        (e.meaningFr?.toLowerCase().includes(needle) ?? false)
+      );
+    });
+  }, [q, category, level]);
 
-  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
-  const paged = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const firstShown = visible.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const lastShown = Math.min(page * PAGE_SIZE, visible.length);
+  const sorted = React.useMemo(() => {
+    const arr = [...filtered];
+    if (sort === "za") arr.sort((a, b) => b.headword.localeCompare(a.headword));
+    else if (sort === "level")
+      arr.sort((a, b) => LEVEL_RANK[a.level] - LEVEL_RANK[b.level] || a.headword.localeCompare(b.headword));
+    else arr.sort((a, b) => a.headword.localeCompare(b.headword));
+    return arr;
+  }, [filtered, sort]);
 
-  const load = React.useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (category !== "all") params.set("category", category);
-    const res = await fetch(`/api/dictionary?${params}`);
-    const data = await res.json();
-    setEntries(data.entries ?? []);
-    setLoading(false);
-  }, [q, category]);
+  React.useEffect(() => setPage(1), [q, category, level, sort]);
 
-  React.useEffect(() => {
-    const t = setTimeout(load, 250);
-    return () => clearTimeout(t);
-  }, [load]);
-
-  // Any filter change collapses back to the first page.
-  React.useEffect(() => setPage(1), [q, category, level]);
-
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const paged = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const goToPage = (next: number) => {
     setPage(next);
     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -70,99 +79,70 @@ export default function DictionaryPage() {
 
   return (
     <div className="min-h-dvh">
+      <ScrollProgress />
+      <AuroraBackdrop />
       <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
-        <h1 className="font-display text-display-md font-bold">Cultural dictionary</h1>
-        <p className="mt-2 text-muted-foreground">
-          The meaning behind the words — not just the translation.
-        </p>
 
-        <div className="relative mt-6">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search a word or meaning…"
-            className="h-12 pl-10 text-base"
-            aria-label="Search the dictionary"
+      <main className="mx-auto max-w-5xl px-4 py-10 sm:py-14">
+        <div className="grid items-center gap-8 md:grid-cols-2">
+          <header>
+            <h1 className="font-display text-display-md font-bold">
+              Kreol Morisien <span className="gradient-text">dictionary</span>
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              The meaning behind the words — search, listen, and discover the language of Mauritius.
+            </p>
+            <div className="mt-6 flex gap-8">
+              <Stat value={ENTRIES.length} label="words" />
+              <Stat value={CATEGORY_COUNTS.all ? Object.keys(CATEGORY_COUNTS).length - 1 : 0} label="categories" />
+              <Stat value={WITH_EXAMPLES} label="with examples" />
+            </div>
+          </header>
+          <WordSpotlight entries={ENTRIES} />
+        </div>
+
+        <div className="mt-10">
+          <DictToolbar
+            q={q}
+            setQ={setQ}
+            category={category}
+            setCategory={setCategory}
+            categoryCounts={CATEGORY_COUNTS}
+            level={level}
+            setLevel={setLevel}
+            sort={sort}
+            setSort={setSort}
+            resultCount={sorted.length}
           />
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => (
-            <Button
-              key={c}
-              size="sm"
-              variant={category === c ? "default" : "outline"}
-              onClick={() => setCategory(c)}
-              className="capitalize"
-            >
-              {c}
-            </Button>
-          ))}
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-2">
-          {LEVEL_FILTERS.map((l) => (
-            <Button
-              key={l}
-              size="sm"
-              variant={level === l ? "secondary" : "ghost"}
-              onClick={() => setLevel(l)}
-            >
-              {l === "all" ? "All levels" : LEVEL_META[l].label}
-            </Button>
-          ))}
-        </div>
-
-        {!loading && visible.length > 0 && (
-          <p className="mt-6 text-sm text-muted-foreground" aria-live="polite">
-            Showing <span className="font-medium text-foreground">{firstShown}–{lastShown}</span> of{" "}
-            {visible.length} {visible.length === 1 ? "word" : "words"}
-          </p>
-        )}
-
-        <div ref={resultsRef} className="mt-3 scroll-mt-20">
-          {loading ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="space-y-3 p-5">
-                    <div className="flex justify-between">
-                      <Skeleton className="h-5 w-24" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-5 w-20 rounded-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : visible.length === 0 ? (
+        <div ref={resultsRef} className="mt-6 scroll-mt-20">
+          {sorted.length === 0 ? (
             <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center gap-3 px-6 py-14 text-center">
+              <CardContent className="flex flex-col items-center gap-3 px-6 py-16 text-center">
                 <span className="grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
                   <BookOpen className="size-6" />
                 </span>
-                <p className="font-medium">No entries found</p>
+                <p className="font-medium">No words found</p>
                 <p className="max-w-xs text-sm text-muted-foreground">
-                  Try another word or level — or suggest a new one through the community flow.
+                  Try another spelling or clear the filters — Kreol has many spelling variants.
                 </p>
               </CardContent>
             </Card>
           ) : (
             <>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <motion.div
+                key={`${page}-${category}-${level}-${sort}-${q}`}
+                variants={containerStagger}
+                initial="hidden"
+                animate="show"
+                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              >
                 {paged.map((e) => (
-                  <EntryCard key={`${e.headword}-${e.language}`} entry={e} />
+                  <EntryCard key={`${e.headword}-${e.meaningEn}`} entry={e} />
                 ))}
-              </div>
-              <Pagination
-                page={page}
-                pageCount={pageCount}
-                onPageChange={goToPage}
-                className="mt-8"
-              />
+              </motion.div>
+              <Pagination page={page} pageCount={pageCount} onPageChange={goToPage} className="mt-8" />
             </>
           )}
         </div>
