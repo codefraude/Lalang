@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Languages, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/user-menu";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -58,11 +59,11 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex">
-            <Link href="/profile">Profile</Link>
-          </Button>
+          <div className="hidden sm:block">
+            <UserMenu />
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -101,7 +102,7 @@ export function SiteHeader() {
                 </Link>
               ))}
               <Button asChild variant="outline" className="mt-1 w-full">
-                <Link href="/profile">Profile</Link>
+                <Link href="/account">Account</Link>
               </Button>
             </div>
           </motion.nav>

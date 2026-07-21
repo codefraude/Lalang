@@ -63,19 +63,65 @@ enum SuggestionStatus {
   REJECTED
 }
 
+// Lifecycle of an account. DEACTIVATED hides the profile and blocks sign-in
+// until reactivated; deletion is a hard delete handled by the API.
+enum UserStatus {
+  ACTIVE
+  DEACTIVATED
+}
+
+enum ThemePref {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+// How a sign-in attempt was performed / its outcome, for the login history.
+enum AuthMethod {
+  PASSWORD
+  GOOGLE
+  ONE_TAP
+  PASSKEY
+  TOTP
+}
+
+enum AuthEventStatus {
+  SUCCESS
+  FAILED
+  LOGOUT
+}
+
 // ---------------------------------------------------------------------------
-// Auth (NextAuth / Auth.js)
+// Auth (NextAuth / Auth.js) + identity
 // ---------------------------------------------------------------------------
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  username      String?    @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   passwordHash  String?
-  role          Role      @default(USER)
-  createdAt     DateTime  @default(now())
+  role          Role       @default(USER)
+  status        UserStatus @default(ACTIVE)
+  deactivatedAt DateTime?
+
+  // Two-factor (TOTP). `totpSecret` is encrypted at rest (AES-256-GCM).
+  // `totpLastStep` is the last accepted time-step, for replay protection.
+  twoFactorEnabled Boolean   @default(false)
+  totpSecret       String?
+  totpLastStep     Int?
+  twoFactorAt      DateTime?
+
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
 
   accounts     Account[]
   sessions     Session[]
@@ -84,6 +130,21 @@ model User {
   feedback     Feedback[]
   suggestions  TranslationSuggestion[]
   votes        Vote[]
+
+  profile             UserProfile?
+  settings            UserSettings?
+  notificationPrefs   NotificationPreference?
+  avatar              Avatar?
+  deviceSessions      DeviceSession[]
+  loginHistory        LoginHistory[]
+  auditLogs           AuditLog[]
+  passwordResetTokens PasswordResetToken[]
+  emailVerifyTokens   EmailVerificationToken[]
+  emailChangeTokens   EmailChangeToken[]
+  authenticators      Authenticator[]
+  backupCodes         BackupCode[]
+
+  @@index([status])
 }
 
 model Account {
@@ -100,9 +161,12 @@ model Account {
   id_token          String?
   session_state     String?
 
+  createdAt DateTime @default(now())
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -119,6 +183,230 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Extended profile, settings & preferences
+// ---------------------------------------------------------------------------
+
+/// Rich public/personal profile. Created lazily on first edit.
+model UserProfile {
+  id         String    @id @default(cuid())
+  userId     String    @unique
+  firstName  String?
+  lastName   String?
+  bio        String?
+  phone      String?
+  location   String?
+  country    String? // ISO 3166-1 alpha-2
+  timezone   String?
+  occupation String?
+  website    String?
+  birthday   DateTime? @db.Date
+  /// Map of platform -> url, e.g. { "github": "https://…" }. Validated with Zod.
+  socials    Json      @default("{}")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// App-level settings & privacy. Consolidates "UserSettings" + "UserPreferences".
+model UserSettings {
+  id                String            @id @default(cuid())
+  userId            String            @unique
+  theme             ThemePref         @default(SYSTEM)
+  locale            String            @default("en")
+  timezone          String?
+  profileVisibility ProfileVisibility @default(PRIVATE)
+  showEmail         Boolean           @default(false)
+  showActivity      Boolean           @default(true)
+  reducedMotion     Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Email/notification channel toggles. Security alerts cannot be disabled.
+model NotificationPreference {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  productUpdates    Boolean  @default(true)
+  securityAlerts    Boolean  @default(true)
+  marketingEmails   Boolean  @default(false)
+  weeklyDigest      Boolean  @default(false)
+  learningReminders Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Uploaded avatar stored in-database (portable across serverless hosts).
+/// Served through /api/avatar. Images are compressed client-side first.
+model Avatar {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  data      Bytes
+  mimeType  String
+  size      Int
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------------
+// Sessions, devices, security history
+// ---------------------------------------------------------------------------
+
+/// A persistent, revocable sign-in. The JWT carries this row's id (`sid`);
+/// every request re-checks it, so revoking a row logs that device out.
+model DeviceSession {
+  id           String     @id @default(cuid())
+  userId       String
+  method       AuthMethod @default(PASSWORD)
+  userAgent    String?
+  browser      String?
+  os           String?
+  deviceType   String? // desktop | mobile | tablet
+  ip           String?
+  country      String?
+  city         String?
+  rememberMe   Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  lastActiveAt DateTime   @default(now())
+  expiresAt    DateTime
+  revokedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+/// Append-only log of every authentication attempt (success & failure).
+model LoginHistory {
+  id         String          @id @default(cuid())
+  userId     String?
+  email      String? // attempted email, for failed logins on unknown accounts
+  method     AuthMethod      @default(PASSWORD)
+  status     AuthEventStatus @default(SUCCESS)
+  reason     String?
+  userAgent  String?
+  browser    String?
+  os         String?
+  deviceType String?
+  ip         String?
+  country    String?
+  city       String?
+  createdAt  DateTime        @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// General audit trail for sensitive actions (profile edits, security changes).
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Verification / recovery tokens (raw token emailed, SHA-256 hash stored)
+// ---------------------------------------------------------------------------
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  ip        String?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EmailChangeToken {
+  id        String    @id @default(cuid())
+  userId    String
+  newEmail  String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Passkeys (WebAuthn) & TOTP backup codes
+// ---------------------------------------------------------------------------
+
+/// A registered passkey credential. IDs/keys stored base64url-encoded.
+model Authenticator {
+  id           String    @id @default(cuid())
+  userId       String
+  credentialId String    @unique
+  publicKey    Bytes
+  counter      Int       @default(0)
+  deviceType   String // singleDevice | multiDevice
+  backedUp     Boolean   @default(false)
+  transports   String[]
+  name         String?
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// One-time recovery codes for 2FA. `codeHash` is a bcrypt hash.
+model BackupCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 // ---------------------------------------------------------------------------
@@ -173,19 +461,19 @@ model Feedback {
 // ---------------------------------------------------------------------------
 
 model DictionaryEntry {
-  id           String             @id @default(cuid())
-  headword     String
-  language     Language
-  partOfSpeech String?
-  meaningEn    String
-  meaningFr    String?
-  category     DictionaryCategory @default(GENERAL)
-  level        Level              @default(BEGINNER)
+  id            String             @id @default(cuid())
+  headword      String
+  language      Language
+  partOfSpeech  String?
+  meaningEn     String
+  meaningFr     String?
+  category      DictionaryCategory @default(GENERAL)
+  level         Level              @default(BEGINNER)
   pronunciation String?
-  examples     String[]
-  approved     Boolean            @default(true)
-  createdById  String?
-  createdAt    DateTime           @default(now())
+  examples      String[]
+  approved      Boolean            @default(true)
+  createdById   String?
+  createdAt     DateTime           @default(now())
 
   dailyWords DailyWord[]
 
@@ -195,8 +483,8 @@ model DictionaryEntry {
 }
 
 model DailyWord {
-  id      String   @id @default(cuid())
-  date    DateTime @unique @db.Date
+  id      String          @id @default(cuid())
+  date    DateTime        @unique @db.Date
   entryId String
   entry   DictionaryEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }

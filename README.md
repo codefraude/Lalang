@@ -27,7 +27,9 @@ Try the example from the spec — "I'm very tired today" →
 - **Next.js 15** (App Router) + **React 19** + **TypeScript**
 - **Tailwind CSS** + shadcn/ui-style components + **Framer Motion**
 - **PostgreSQL** + **Prisma**
-- **NextAuth / Auth.js v5** (email/password + Google)
+- **NextAuth / Auth.js v5** — email/password, Google OAuth + One Tap, **passkeys
+  (WebAuthn)**, **TOTP 2FA**, revocable device sessions
+- **React Hook Form** + **Zod**, **TanStack Query**, **Resend** (email)
 - **OpenAI** (optional) with an offline dictionary fallback
 - **Jest** + Testing Library
 
@@ -80,7 +82,11 @@ All optional — see `.env.example` for the full list.
 | --- | --- |
 | `DATABASE_URL` | History, accounts, community features |
 | `AUTH_SECRET` | Auth (generate with `npx auth secret`) |
+| `AUTH_URL` / `NEXT_PUBLIC_APP_URL` | Email links, WebAuthn origin, cookies |
+| `RESEND_API_KEY` / `EMAIL_FROM` | Sending real email (else logged to console) |
+| `TOTP_ENC_KEY` | Encrypting 2FA secrets (falls back to `AUTH_SECRET`) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | "Sign in with Google" |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google One Tap (same value, browser-side) |
 | `OPENAI_API_KEY` | AI translation (falls back to dictionary if unset) |
 | `OPENAI_MODEL` | Override the model (default `gpt-4o-mini`) |
 
@@ -111,30 +117,37 @@ editing `ai-translator.ts` only.
 ```
 src/
 ├── app/                    # App Router pages + API routes
-│   ├── api/                # /translate, /dictionary, /health, /auth
+│   ├── api/                # translate, dictionary, auth, + 30 account/auth routes
 │   ├── translator/         # main translator
 │   ├── dictionary/         # cultural dictionary (search)
 │   ├── learn/              # word of the day + quiz
-│   ├── profile/ login/     # account + history
+│   ├── login/ register/    # auth pages (+ forgot/reset/verify-email)
+│   ├── account/            # dashboard: overview, profile, security, sessions…
 │   └── admin/              # role-gated dashboard
-├── components/             # UI + feature components
+├── components/{auth,account,ui}  # auth flows, dashboard, design system
 ├── services/translation/   # the pipeline (see above)
-├── lib/                    # prisma, auth, rate-limit, utils
-├── hooks/ utils/ types/    # client hooks, zod schemas, shared types
-prisma/                     # schema + seed
+├── lib/                    # auth (+ auth/*), session-store, tokens, totp,
+│                           #   webauthn, crypto, mail, reauth, prisma, api
+├── hooks/ types/           # client hooks, module augmentation
+prisma/                     # schema + seed + migrations
 ```
 
 ## What's built vs. what's next
 
 **Working now**
-- Translation pipeline (offline + AI) with the 4 languages and 7 registers
+- Translation pipeline (offline + AI) with the languages and 7 registers
 - Live translator UI: detect/swap languages, register, copy, text-to-speech
 - Cultural dictionary with search + categories
 - Learn page (word of the day + quiz)
-- Full Prisma schema + seed
-- Auth wiring (email/password + Google) and login page
-- History persistence + role-gated admin dashboard
-- API rate limiting, input validation, tests
+- **Complete authentication ecosystem** — email/password, Google OAuth + One Tap,
+  passkeys, TOTP 2FA + backup codes, email verification, password reset, change
+  email/password, re-auth for sensitive actions, device sessions + login history,
+  revoke/log-out-everywhere, connected accounts, delete/deactivate. See
+  [`docs/AUTHENTICATION.md`](docs/AUTHENTICATION.md) and [`docs/SECURITY.md`](docs/SECURITY.md).
+- **Account dashboard** — profile editor, avatar upload, completion ring, security
+  center, notification & privacy preferences
+- Full Prisma schema + seed, role-gated admin dashboard
+- API rate limiting, CSRF + input validation, audit logging, tests
 
 **Scaffolded stubs / next up**
 - Voice input (speech-to-text) — TTS output already works

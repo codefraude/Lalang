@@ -2,106 +2,199 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Languages } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
+import { z } from "zod";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { Field, PasswordInput } from "@/components/auth/form-field";
+import { GoogleButton, PasskeyButton, AuthDivider } from "@/components/auth/social-auth";
+import { GoogleOneTap } from "@/components/auth/google-one-tap";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
+const schema = z.object({
+  email: z.string().email("Enter a valid email."),
+  password: z.string().min(1, "Enter your password."),
+  rememberMe: z.boolean().optional(),
+});
+type Values = z.infer<typeof schema>;
 
-  const onSubmit = async () => {
-    setLoading(true);
-    setError(null);
+function LoginForm() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const callbackUrl = params.get("callbackUrl") || "/account";
+
+  const [step, setStep] = React.useState<"credentials" | "twofactor">("credentials");
+  const [useBackup, setUseBackup] = React.useState(false);
+  const [code, setCode] = React.useState("");
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const { register, handleSubmit, getValues, control, formState } = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { rememberMe: true },
+  });
+
+  const attempt = async (values: Values) => {
+    setSubmitting(true);
+    setFormError(null);
     const res = await signIn("credentials", {
-      email,
-      password,
+      email: values.email,
+      password: values.password,
+      rememberMe: String(values.rememberMe ?? false),
+      totp: step === "twofactor" && !useBackup ? code : undefined,
+      backupCode: step === "twofactor" && useBackup ? code : undefined,
       redirect: false,
     });
-    setLoading(false);
+    setSubmitting(false);
+
+    const errorCode = (res as { code?: string } | undefined)?.code || res?.error || "";
     if (res?.error) {
-      setError("Invalid email or password.");
-    } else {
-      window.location.href = "/profile";
+      if (errorCode.includes("totp_required")) {
+        setStep("twofactor");
+      } else if (errorCode.includes("totp_invalid")) {
+        setFormError("That code is incorrect. Try again.");
+      } else {
+        setFormError("Invalid email or password.");
+        setStep("credentials");
+      }
+      return;
     }
+    router.push(callbackUrl);
+    router.refresh();
   };
 
   return (
-    <div className="grid min-h-dvh place-items-center px-4">
-      <div className="w-full max-w-sm">
-        <Link href="/" className="mb-6 flex items-center justify-center gap-2 font-semibold">
-          <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-primary">
-            <Languages className="size-4" />
-          </span>
-          <span className="text-lg tracking-tight">Lalang</span>
-        </Link>
-
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h1 className="text-xl font-semibold">Welcome back</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Sign in to save your work.</p>
-
-            <div className="mt-5 space-y-3">
-              <div className="space-y-1.5">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                />
-              </div>
-              {error && (
-                <p
-                  role="alert"
-                  className="rounded-[calc(var(--radius)-0.25rem)] border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                >
-                  {error}
-                </p>
-              )}
-              <Button className="w-full" onClick={onSubmit} loading={loading}>
-                Sign in
-              </Button>
-            </div>
-
-            <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border" />
-              or
-              <span className="h-px flex-1 bg-border" />
-            </div>
-
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => signIn("google", { callbackUrl: "/profile" })}
+    <AuthShell
+      title={step === "credentials" ? "Welcome back" : "Two-factor authentication"}
+      subtitle={
+        step === "credentials"
+          ? "Sign in to continue to your account."
+          : useBackup
+            ? "Enter one of your backup codes."
+            : "Enter the 6-digit code from your authenticator app."
+      }
+      footer={
+        step === "credentials" ? (
+          <>
+            New to Lalang?{" "}
+            <Link href="/register" className="font-medium text-primary hover:underline">
+              Create an account
+            </Link>
+          </>
+        ) : null
+      }
+    >
+      <GoogleOneTap callbackUrl={callbackUrl} />
+      <AnimatePresence mode="wait">
+        {step === "credentials" ? (
+          <motion.form
+            key="credentials"
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            onSubmit={handleSubmit(attempt)}
+            className="space-y-4"
+          >
+            <Field label="Email" htmlFor="email" error={formState.errors.email?.message}>
+              <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} />
+            </Field>
+            <Field
+              label="Password"
+              htmlFor="password"
+              error={formState.errors.password?.message}
+              hint={
+                <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
+                  Forgot password?
+                </Link>
+              }
             >
-              Continue with Google
+              <PasswordInput id="password" autoComplete="current-password" placeholder="••••••••" {...register("password")} />
+            </Field>
+
+            <div className="flex items-center gap-2">
+              <Controller
+                control={control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <Checkbox id="rememberMe" checked={!!field.value} onCheckedChange={field.onChange} />
+                )}
+              />
+              <Label htmlFor="rememberMe" className="cursor-pointer text-sm font-normal text-muted-foreground">
+                Keep me signed in for 30 days
+              </Label>
+            </div>
+
+            {formError && (
+              <p role="alert" className="rounded-[calc(var(--radius)-0.25rem)] border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {formError}
+              </p>
+            )}
+
+            <Button type="submit" className="w-full" loading={submitting}>
+              Sign in
             </Button>
 
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            <AuthDivider />
+            <div className="space-y-2">
+              <GoogleButton callbackUrl={callbackUrl} />
+              <PasskeyButton callbackUrl={callbackUrl} />
+            </div>
+          </motion.form>
+        ) : (
+          <motion.form
+            key="twofactor"
+            initial={{ opacity: 0, x: 8 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 8 }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              void attempt(getValues());
+            }}
+            className="space-y-4"
+          >
+            <Field label={useBackup ? "Backup code" : "Authentication code"} htmlFor="code">
+              <Input
+                id="code"
+                inputMode={useBackup ? "text" : "numeric"}
+                autoComplete="one-time-code"
+                autoFocus
+                placeholder={useBackup ? "xxxxx-xxxxx" : "123456"}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="text-center text-lg tracking-[0.3em]"
+              />
+            </Field>
+            {formError && (
+              <p role="alert" className="text-sm text-destructive">{formError}</p>
+            )}
+            <Button type="submit" className="w-full" loading={submitting} disabled={code.length < 6}>
+              Verify and sign in
+            </Button>
+            <div className="flex items-center justify-between text-xs">
+              <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => { setStep("credentials"); setCode(""); setFormError(null); }}>
+                ← Back
+              </button>
+              <button type="button" className="font-medium text-primary hover:underline" onClick={() => { setUseBackup((v) => !v); setCode(""); }}>
+                {useBackup ? "Use authenticator app" : "Use a backup code"}
+              </button>
+            </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
+    </AuthShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <LoginForm />
+    </React.Suspense>
   );
 }

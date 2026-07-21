@@ -35,3 +35,6 @@ yarn-error.log*
 
 # source PDFs / large local assets (not shipped; copyrighted textbooks)
 /src/asset/*.pdf
+
+# local dev email drop (no provider configured)
+.dev-mail/
