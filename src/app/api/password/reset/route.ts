@@ -13,7 +13,7 @@ import { assertSameOriginOr403, rateOr429, readJson, jsonOk, jsonError, zodError
 export async function POST(req: Request) {
   const csrf = assertSameOriginOr403(req);
   if (csrf) return csrf;
-  const limited = rateOr429(req, "reset", 5, 15 * 60_000);
+  const limited = await rateOr429(req, "reset", 5, 15 * 60_000);
   if (limited) return limited;
 
   const parsed = resetPasswordSchema.safeParse(await readJson(req));

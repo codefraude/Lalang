@@ -9,6 +9,7 @@ import { categoryStyle } from "@/components/learn/category-kit";
 import { riseItem } from "@/components/learn/motion";
 import { LANGUAGE_META, LEVEL_META, type Language, type Level } from "@/types/translation";
 import type { DictionaryCategory } from "@/services/translation";
+import { useSpeak } from "@/hooks/use-speak";
 import { cn } from "@/lib/utils";
 
 export interface DictionaryEntry {
@@ -31,17 +32,10 @@ const LEVEL_BADGE: Record<Level, "success" | "info" | "warning"> = {
 
 export function EntryCard({ entry }: { entry: DictionaryEntry }) {
   const [copied, setCopied] = React.useState(false);
+  const { speak, speaking } = useSpeak();
   const cat = categoryStyle(entry.category as DictionaryCategory);
   const Icon = cat.icon;
   const meta = LANGUAGE_META[entry.language];
-
-  const speak = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    const u = new SpeechSynthesisUtterance(entry.headword);
-    u.lang = "fr-FR"; // best-available browser proxy for Kreol
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  };
 
   const copy = async () => {
     await navigator.clipboard.writeText(`${entry.headword} — ${entry.meaningEn}`);
@@ -83,7 +77,7 @@ export function EntryCard({ entry }: { entry: DictionaryEntry }) {
             <Badge variant="outline">{cat.label}</Badge>
           </div>
           <div className="flex gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-            <button type="button" onClick={speak} aria-label={`Listen to ${entry.headword}`} className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
+            <button type="button" onClick={() => speak(entry.headword, entry.language)} aria-pressed={speaking} aria-label={`Listen to ${entry.headword}`} className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
               <Volume2 className="size-4" />
             </button>
             <button type="button" onClick={copy} aria-label={`Copy ${entry.headword}`} className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">

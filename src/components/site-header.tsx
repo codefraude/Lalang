@@ -8,12 +8,14 @@ import { Languages, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/components/user-menu";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { useI18n } from "@/i18n/provider";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/translator", label: "Translate" },
-  { href: "/dictionary", label: "Dictionary" },
-  { href: "/learn", label: "Learn" },
+  { href: "/translator", key: "nav.translate" },
+  { href: "/dictionary", key: "nav.dictionary" },
+  { href: "/learn", key: "nav.learn" },
 ];
 
 function Logo() {
@@ -33,6 +35,7 @@ function isActive(pathname: string, href: string) {
 
 export function SiteHeader() {
   const pathname = usePathname() ?? "";
+  const { t } = useI18n();
   const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => setOpen(false), [pathname]);
@@ -54,12 +57,13 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              {item.label}
+              {t(item.key)}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
+          <LocaleSwitcher className="hidden w-[8.5rem] sm:block" />
           <ThemeToggle />
           <div className="hidden sm:block">
             <UserMenu />
@@ -68,7 +72,7 @@ export function SiteHeader() {
             variant="ghost"
             size="icon"
             className="sm:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? t("menu.close") : t("menu.open")}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
@@ -98,11 +102,14 @@ export function SiteHeader() {
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   )}
                 >
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               ))}
+              <div className="mt-1">
+                <LocaleSwitcher className="w-full" />
+              </div>
               <Button asChild variant="outline" className="mt-1 w-full">
-                <Link href="/account">Account</Link>
+                <Link href="/account">{t("nav.account")}</Link>
               </Button>
             </div>
           </motion.nav>

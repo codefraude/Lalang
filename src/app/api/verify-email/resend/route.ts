@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user) return unauthorized();
 
-  const limited = rateOr429(req, `verify-resend:${session.user.id}`, 3, 5 * 60_000);
+  const limited = await rateOr429(req, `verify-resend:${session.user.id}`, 3, 5 * 60_000);
   if (limited) return limited;
 
   const user = await prisma.user.findUnique({

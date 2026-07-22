@@ -9,7 +9,7 @@ const GENERIC = { ok: true, message: "If an account exists for that email, we've
 export async function POST(req: Request) {
   const csrf = assertSameOriginOr403(req);
   if (csrf) return csrf;
-  const limited = rateOr429(req, "forgot", 5, 15 * 60_000);
+  const limited = await rateOr429(req, "forgot", 5, 15 * 60_000);
   if (limited) return limited;
 
   const parsed = forgotPasswordSchema.safeParse(await readJson(req));

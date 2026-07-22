@@ -4,6 +4,7 @@ import * as React from "react";
 import { Mic, X } from "lucide-react";
 import { ProgressRing } from "@/components/learn/progress-ring";
 import { useVoiceInput } from "@/hooks/use-voice-input";
+import { useI18n } from "@/i18n/provider";
 import { cn } from "@/lib/utils";
 
 function readingTime(words: number): string {
@@ -22,6 +23,7 @@ interface Props {
 
 /** Source card: auto-growing textarea + live counters, dictation, drop & paste. */
 export function TranslatorInput({ value, onChange, sourceLang, max, onSubmit }: Props) {
+  const { t } = useI18n();
   const ref = React.useRef<HTMLTextAreaElement>(null);
   const voiceLang = sourceLang === "auto" ? "en" : sourceLang;
   const { listening, supported, toggle } = useVoiceInput(voiceLang, (t) => onChange(value ? `${value} ${t}` : t));
@@ -59,8 +61,8 @@ export function TranslatorInput({ value, onChange, sourceLang, max, onSubmit }: 
             onSubmit?.();
           }
         }}
-        placeholder="Type, paste, or speak…"
-        aria-label="Text to translate"
+        placeholder={t("translator.inputPlaceholder")}
+        aria-label={t("translator.inputPlaceholder")}
         className="min-h-[160px] w-full flex-1 resize-none bg-transparent p-4 text-lg leading-relaxed outline-none placeholder:text-muted-foreground"
       />
       <div className="flex items-center justify-between gap-3 border-t px-4 py-2.5">

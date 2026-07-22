@@ -42,13 +42,13 @@ export function assertSameOriginOr403(req: Request): NextResponse | null {
  * Fixed-window rate limit. Returns a 429 response when exceeded, else null.
  * `scope` namespaces the bucket; the client IP is appended automatically.
  */
-export function rateOr429(
+export async function rateOr429(
   req: Request,
   scope: string,
   max: number,
   windowMs: number,
-): NextResponse | null {
-  const result = rateLimit(`${scope}:${clientKey(req)}`, max, windowMs);
+): Promise<NextResponse | null> {
+  const result = await rateLimit(`${scope}:${clientKey(req)}`, max, windowMs);
   if (result.success) return null;
   const retryAfter = Math.max(1, Math.ceil((result.resetAt - Date.now()) / 1000));
   return jsonError("Too many requests. Please slow down and try again.", 429, { retryAfter });

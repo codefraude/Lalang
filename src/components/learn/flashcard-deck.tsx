@@ -6,6 +6,7 @@ import { Check, Sparkles, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FlipCard } from "@/components/learn/flip-card";
+import { SpeakButton } from "@/components/speak-button";
 import { LANGUAGE_META } from "@/types/translation";
 import type { SeedDictionaryEntry } from "@/services/translation";
 
@@ -116,6 +117,7 @@ export function FlashcardDeck({
               <span className="text-xs uppercase tracking-wide text-muted-foreground">{meta.flag} {meta.nativeLabel}</span>
               <p className="gradient-text font-display text-4xl font-bold">{entry.headword}</p>
               {entry.pronunciation && <p className="text-sm text-muted-foreground">/{entry.pronunciation}/</p>}
+              <SpeakButton text={entry.headword} lang={entry.language} className="mt-1 border" />
             </div>
           }
           back={

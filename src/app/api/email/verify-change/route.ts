@@ -9,7 +9,7 @@ const schema = z.object({ token: z.string().min(1) });
 export async function POST(req: Request) {
   const csrf = assertSameOriginOr403(req);
   if (csrf) return csrf;
-  const limited = rateOr429(req, "email-verify-change", 10, 60_000);
+  const limited = await rateOr429(req, "email-verify-change", 10, 60_000);
   if (limited) return limited;
 
   const parsed = schema.safeParse(await readJson(req));

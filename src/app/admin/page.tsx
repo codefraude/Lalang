@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { SuggestionModeration } from "@/components/admin/suggestion-moderation";
 
 interface Stats {
   totalTranslations: number;
@@ -116,6 +117,11 @@ export default async function AdminPage() {
             ))
           )}
         </div>
+
+        <h2 className="mt-10 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Pending suggestions
+        </h2>
+        <SuggestionModeration />
       </main>
     </div>
   );

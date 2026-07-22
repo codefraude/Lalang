@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   if (!(await isReauthenticated(session))) {
     return jsonError("Please confirm your identity to continue.", 403, { code: "reauth_required" });
   }
-  const limited = rateOr429(req, `email-change:${session.user.id}`, 3, 15 * 60_000);
+  const limited = await rateOr429(req, `email-change:${session.user.id}`, 3, 15 * 60_000);
   if (limited) return limited;
 
   const parsed = schema.safeParse(await readJson(req));

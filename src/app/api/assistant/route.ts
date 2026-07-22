@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 const MAX = 2000;
 
 export async function POST(req: Request) {
-  const limit = rateLimit(`assistant:${clientKey(req)}`, 20, 60_000);
+  const limit = await rateLimit(`assistant:${clientKey(req)}`, 20, 60_000);
   if (!limit.success) {
     return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429, headers: { "Retry-After": "60" } });
   }

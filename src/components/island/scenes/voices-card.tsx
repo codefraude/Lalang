@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SpeakButton } from "@/components/speak-button";
 
 // One idea, said three ways — English, French and the Kreol everyone shares.
 const VOICES = [
@@ -30,7 +31,14 @@ export function VoicesCard() {
             <span className="block">🇬🇧 {v.en}</span>
             <span className="block">🇫🇷 {v.fr}</span>
           </div>
-          <span className="font-display text-lg font-bold text-[#7ff0ff]">{v.mfe}</span>
+          <div className="flex items-center gap-1">
+            <span className="font-display text-lg font-bold text-[#7ff0ff]">{v.mfe}</span>
+            <SpeakButton
+              text={v.mfe}
+              lang="mfe"
+              className="text-white/50 hover:bg-white/10 hover:text-white"
+            />
+          </div>
         </motion.li>
       ))}
     </motion.ul>

@@ -117,4 +117,6 @@ export interface TranslationResult {
   culturalNote?: string;
   /** Per-stage trace of what the pipeline did. */
   trace: PipelineStageTrace[];
+  /** True while tokens are still streaming in (client-side only). */
+  streaming?: boolean;
 }

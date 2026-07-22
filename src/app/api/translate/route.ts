@@ -24,7 +24,7 @@ function engineToEnum(e: TranslationEngine) {
 
 export async function POST(req: Request) {
   // Rate limiting -----------------------------------------------------------
-  const limit = rateLimit(`translate:${clientKey(req)}`, 30, 60_000);
+  const limit = await rateLimit(`translate:${clientKey(req)}`, 30, 60_000);
   if (!limit.success) {
     return NextResponse.json(
       { error: "Too many requests. Please slow down." },

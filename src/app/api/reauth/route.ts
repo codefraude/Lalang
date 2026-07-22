@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user) return unauthorized();
 
-  const limited = rateOr429(req, `reauth:${session.user.id}`, 5, 5 * 60_000);
+  const limited = await rateOr429(req, `reauth:${session.user.id}`, 5, 5 * 60_000);
   if (limited) return limited;
 
   const parsed = reauthSchema.safeParse(await readJson(req));

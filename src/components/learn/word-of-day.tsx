@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Sparkles } from "lucide-react";
 import { FlipCard } from "@/components/learn/flip-card";
+import { SpeakButton } from "@/components/speak-button";
 import { useSpotlight } from "@/components/learn/use-spotlight";
 import { categoryStyle } from "@/components/learn/category-kit";
 import { LANGUAGE_META } from "@/types/translation";
@@ -56,6 +57,11 @@ export function WordOfDay({ entry }: { entry: SeedDictionaryEntry }) {
             <p className="relative text-sm text-muted-foreground">
               {meta.flag} {meta.nativeLabel} · <span className="text-foreground/60">tap to flip</span>
             </p>
+            <SpeakButton
+              text={entry.headword}
+              lang={entry.language}
+              className="absolute bottom-5 right-5 z-10 border bg-card/70 backdrop-blur"
+            />
           </div>
         }
         back={

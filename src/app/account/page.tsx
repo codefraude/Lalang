@@ -6,8 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getAccount } from "@/lib/account";
 import { Card, CardContent } from "@/components/ui/card";
 import { CompletionRing } from "@/components/account/completion-ring";
-// Email verification is paused for now — re-enable with the banner below.
-// import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
+import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Account overview" };
@@ -37,8 +36,7 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="space-y-6">
-      {/* Verification banner paused for now — re-enable when email is configured: */}
-      {/* {!account.user.emailVerified && <VerifyEmailBanner />} */}
+      {!account.user.emailVerified && <VerifyEmailBanner />}
 
       <div>
         <h1 className="font-display text-display-md font-bold">

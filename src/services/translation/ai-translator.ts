@@ -1,5 +1,6 @@
 import type { Language, Register } from "@/types/translation";
 import { LANGUAGE_META, REGISTER_META } from "@/types/translation";
+import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/translation-cache";
 
 /**
  * AI translation stage.
@@ -65,6 +66,19 @@ export async function translateWithAi(
   if (!apiKey) return null;
 
   const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
+  // Identical inputs always translate the same way — serve them from cache
+  // instead of re-calling (and re-billing) the model.
+  const key = cacheKey({
+    model,
+    source: input.source,
+    target: input.target,
+    register: input.register,
+    text: input.text,
+  });
+  const cached = await getCachedTranslation(key);
+  if (cached) return cached;
+
   const baseUrl = (process.env.OPENAI_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
   const endpoint = `${baseUrl}/chat/completions`;
   const controller = new AbortController();
@@ -107,10 +121,12 @@ export async function translateWithAi(
     };
     if (!parsed.translation) return null;
 
-    return {
+    const result: AiTranslation = {
       text: parsed.translation.trim(),
       culturalNote: parsed.culturalNote?.trim() || undefined,
     };
+    await setCachedTranslation(key, result);
+    return result;
   } catch (error) {
     console.error("[ai-translator] request failed:", error);
     return null;

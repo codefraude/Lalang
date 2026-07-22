@@ -13,8 +13,10 @@ import { ModePicker } from "@/components/translator/mode-picker";
 import { TranslatorInput } from "@/components/translator/translator-input";
 import { TranslatorOutput } from "@/components/translator/translator-output";
 import { ResultActions } from "@/components/translator/result-actions";
+import { SuggestDialog } from "@/components/translator/suggest-dialog";
 import { AssistantPanel, type AssistantMessage } from "@/components/translator/assistant-panel";
 import { HistoryDrawer } from "@/components/translator/history-drawer";
+import { useI18n } from "@/i18n/provider";
 import type { Language, Register, SourceSelection } from "@/types/translation";
 
 const MAX = 2000;
@@ -32,20 +34,28 @@ export function TranslatorPanel() {
   const [historyOpen, setHistoryOpen] = React.useState(false);
 
   const { result, loading, error, translate } = useTranslate();
-  const { speak } = useSpeak();
+  const { speak, speaking } = useSpeak();
   const toast = useToast();
   const history = useTranslatorHistory();
+  const { t } = useI18n();
 
   const run = (over?: Partial<{ text: string; source: SourceSelection; target: Language; register: Register }>) =>
     translate({ text: over?.text ?? text, source: over?.source ?? source, target: over?.target ?? target, register: over?.register ?? register });
 
-  // Persist every completed translation to local history (deduped in the hook).
+  // Persist each *completed* translation to local history (deduped in the hook).
+  // Guarded on !streaming so partial tokens don't create history spam.
   React.useEffect(() => {
-    if (result) history.add({ sourceText: result.sourceText, resultText: result.resultText, source: result.source, target: result.target, register: result.register });
-    setMessages([]);
-    setAssistantOpen(false);
+    if (result && !result.streaming) {
+      history.add({ sourceText: result.sourceText, resultText: result.resultText, source: result.source, target: result.target, register: result.register });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
+
+  // Reset the assistant thread when a new translation begins.
+  React.useEffect(() => {
+    setMessages([]);
+    setAssistantOpen(false);
+  }, [result?.sourceText]);
 
   const current = React.useMemo(
     () => (result ? history.items.find((i) => i.resultText === result.resultText && i.source === result.source && i.target === result.target) : undefined),
@@ -102,13 +112,13 @@ export function TranslatorPanel() {
     <div className="w-full">
       <div className="mb-3 flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)} className="shrink-0">
-          <Clock className="size-4" /> History
+          <Clock className="size-4" /> {t("translator.history")}
         </Button>
         <div className="flex-1">
           <LangBar source={source} target={target} onSource={setSource} onTarget={setTarget} onSwap={swap} />
         </div>
         <Button variant={assistantOpen ? "default" : "outline"} size="sm" onClick={() => setAssistantOpen((o) => !o)} disabled={!result} className="shrink-0">
-          <Bot className="size-4" /> <span className="hidden sm:inline">Assistant</span>
+          <Bot className="size-4" /> <span className="hidden sm:inline">{t("translator.assistant")}</span>
         </Button>
       </div>
 
@@ -131,7 +141,7 @@ export function TranslatorPanel() {
                   <ResultActions
                     isFavorite={Boolean(current?.favorite)}
                     copied={copied}
-                    speaking={false}
+                    speaking={speaking}
                     busy={assistantLoading}
                     onCopy={copy}
                     onSpeak={(rate) => speak(result.resultText, result.target, rate)}
@@ -145,9 +155,20 @@ export function TranslatorPanel() {
             />
           </div>
 
+          {result && !result.streaming && (
+            <div className="mt-3 flex justify-end">
+              <SuggestDialog
+                sourceText={result.sourceText}
+                currentText={result.resultText}
+                source={result.source}
+                target={result.target}
+              />
+            </div>
+          )}
+
           <div className="mt-5 flex justify-center">
             <Button size="lg" onClick={() => run()} loading={loading} disabled={!text.trim()}>
-              {!loading && <Sparkles />} Translate
+              {!loading && <Sparkles />} {t("translator.translate")}
             </Button>
           </div>
         </div>

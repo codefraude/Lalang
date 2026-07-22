@@ -3,8 +3,7 @@ import { hashPassword, isPasswordBreached } from "@/lib/password";
 import { scorePassword } from "@/lib/password-strength";
 import { registerSchema } from "@/lib/validations/auth";
 import { ensureUserDefaults } from "@/lib/auth/provisioning";
-// Email verification is paused for now — re-enable once RESEND_API_KEY is set.
-// import { issueEmailVerification } from "@/lib/tokens";
+import { issueEmailVerification } from "@/lib/tokens";
 import { writeAudit } from "@/lib/audit";
 import { getClientInfo } from "@/lib/request";
 import { assertSameOriginOr403, rateOr429, readJson, jsonOk, jsonError, zodError } from "@/lib/api";
@@ -12,7 +11,7 @@ import { assertSameOriginOr403, rateOr429, readJson, jsonOk, jsonError, zodError
 export async function POST(req: Request) {
   const csrf = assertSameOriginOr403(req);
   if (csrf) return csrf;
-  const limited = rateOr429(req, "register", 5, 60_000);
+  const limited = await rateOr429(req, "register", 5, 60_000);
   if (limited) return limited;
 
   const parsed = registerSchema.safeParse(await readJson(req));
@@ -39,8 +38,10 @@ export async function POST(req: Request) {
     data: { name, email, passwordHash: await hashPassword(password) },
   });
   await ensureUserDefaults(user.id);
-  // Verification email paused for now — re-enable the next line once email is configured:
-  // await issueEmailVerification({ id: user.id, email });
+  // Sends the verification link. With no RESEND_API_KEY it's logged to the
+  // server console (and written to .dev-mail/) instead of emailed, and never
+  // throws — so registration always succeeds.
+  await issueEmailVerification({ id: user.id, email });
   await writeAudit("user.register", { userId: user.id, client: getClientInfo(req.headers) });
 
   return jsonOk({ ok: true });
