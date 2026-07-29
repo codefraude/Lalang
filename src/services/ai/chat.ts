@@ -5,7 +5,14 @@
  * can degrade gracefully.
  */
 
-import { aiApiKey, aiModel, authHeaders, chatCompletionsUrl, samplingParams } from "./provider";
+import {
+  aiApiKey,
+  aiModel,
+  authHeaders,
+  chatCompletionsUrl,
+  logProviderFailure,
+  samplingParams,
+} from "./provider";
 
 const TIMEOUT_MS = 20_000;
 
@@ -44,7 +51,7 @@ export async function chatComplete(opts: ChatOptions): Promise<string | null> {
       }),
     });
     if (!response.ok) {
-      console.error(`[ai] provider returned ${response.status}`);
+      await logProviderFailure("ai", response);
       return null;
     }
     const data = await response.json();

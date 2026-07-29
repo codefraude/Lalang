@@ -50,13 +50,37 @@ describe("full pipeline (offline)", () => {
     ]);
   });
 
-  it("returns the source text gracefully when nothing matches", async () => {
-    const result = await runTranslationPipeline({
+  // `next/jest` loads the developer's .env, so these assert against an explicitly
+  // set key rather than whatever happens to be configured locally — the note the
+  // user sees differs by case, and the wrong one sends them to fix the wrong thing.
+  const ORIGINAL_KEY = process.env.OPENAI_API_KEY;
+  afterEach(() => {
+    process.env.OPENAI_API_KEY = ORIGINAL_KEY;
+  });
+
+  const noMatch = () =>
+    runTranslationPipeline({
       text: "supercalifragilistic nonsense phrase xyz",
       source: "en",
       target: "mfe",
     });
+
+  it("returns the source text gracefully when nothing matches", async () => {
+    const result = await noMatch();
     expect(result.resultText).toBeTruthy();
+    expect(result.engine).toBe("dictionary");
+  });
+
+  it("tells an unconfigured reader to add a key", async () => {
+    delete process.env.OPENAI_API_KEY;
+    const result = await noMatch();
     expect(result.culturalNote).toContain("OPENAI_API_KEY");
+  });
+
+  it("blames the provider, not a missing key, when a key is configured", async () => {
+    process.env.OPENAI_API_KEY = "sk-test-configured";
+    const result = await noMatch();
+    expect(result.culturalNote).toContain("AI provider rejected the request");
+    expect(result.culturalNote).not.toContain("Add an OPENAI_API_KEY");
   });
 });

@@ -1,7 +1,14 @@
 import type { Language, Register } from "@/types/translation";
 import { LANGUAGE_META, REGISTER_META } from "@/types/translation";
 import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/translation-cache";
-import { aiApiKey, aiModel, authHeaders, chatCompletionsUrl, samplingParams } from "@/services/ai/provider";
+import {
+  aiApiKey,
+  aiModel,
+  authHeaders,
+  chatCompletionsUrl,
+  logProviderFailure,
+  samplingParams,
+} from "@/services/ai/provider";
 
 /**
  * AI translation stage.
@@ -104,7 +111,7 @@ export async function translateWithAi(
     });
 
     if (!response.ok) {
-      console.error(`[ai-translator] OpenAI returned ${response.status}`);
+      await logProviderFailure("ai-translator", response);
       return null;
     }
 

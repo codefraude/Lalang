@@ -10,6 +10,7 @@ import { translateWithAi } from "./ai-translator";
 import { translateWithDictionary } from "./dictionary-fallback";
 import { correctGrammar } from "./grammar-correction";
 import { adaptCulturally } from "./cultural-adaptation";
+import { noCoverageNote } from "@/services/ai/provider";
 
 /**
  * The translation pipeline, following the spec flow:
@@ -76,8 +77,7 @@ export async function runTranslationPipeline(
     } else {
       resultText = text;
       engine = "dictionary";
-      culturalNote =
-        "No offline translation found for this input. Add an OPENAI_API_KEY for full AI coverage.";
+      culturalNote = noCoverageNote();
       trace.push({ stage: "dictionary", detail: "no match — returned source" });
     }
   }

@@ -9,7 +9,7 @@ import { translateWithDictionary } from "@/services/translation/dictionary-fallb
 import { correctGrammar } from "@/services/translation/grammar-correction";
 import { adaptCulturally } from "@/services/translation/cultural-adaptation";
 import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/translation-cache";
-import { aiApiKey, aiModel } from "@/services/ai/provider";
+import { aiApiKey, aiModel, noCoverageNote } from "@/services/ai/provider";
 import type { Language, Register, TranslationEngine } from "@/types/translation";
 
 export const runtime = "nodejs";
@@ -101,8 +101,7 @@ export async function POST(req: Request) {
           culturalNote = dict.note;
         } else {
           fullText = text;
-          culturalNote =
-            "No offline translation found for this input. Add an OPENAI_API_KEY for full AI coverage.";
+          culturalNote = noCoverageNote();
         }
         engine = "dictionary";
         send({ type: "chunk", text: fullText });

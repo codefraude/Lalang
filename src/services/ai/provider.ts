@@ -57,3 +57,29 @@ export function samplingParams(model: string, temperature: number): Record<strin
   }
   return { temperature };
 }
+
+/**
+ * Note shown when neither the AI nor the dictionary could translate the input.
+ *
+ * These two situations look identical to the user but need opposite actions, and
+ * conflating them sends people to configure a key they already have: an unset key
+ * is the reader's own setup to fix, whereas a configured key that produced nothing
+ * means the provider rejected the call (quota, billing, auth, rate limit) and the
+ * reason is in the server log.
+ */
+export function noCoverageNote(): string {
+  if (!aiApiKey()) {
+    return "No offline translation found for this input. Add an OPENAI_API_KEY for full AI coverage.";
+  }
+  return "No offline translation found for this input, and the AI provider rejected the request — check the server log for the reason.";
+}
+
+/**
+ * Logs a failed provider response with its body. The status alone hides the one
+ * detail that identifies the problem — `insufficient_quota` and an invalid key
+ * are both plausible causes and are fixed in completely different places.
+ */
+export async function logProviderFailure(tag: string, response: Response): Promise<void> {
+  const detail = await response.text().catch(() => "");
+  console.error(`[${tag}] provider returned ${response.status}: ${detail.slice(0, 500)}`);
+}
