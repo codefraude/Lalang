@@ -88,7 +88,9 @@ All optional — see `.env.example` for the full list.
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | "Sign in with Google" |
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google One Tap (same value, browser-side) |
 | `OPENAI_API_KEY` | AI translation (falls back to dictionary if unset) |
-| `OPENAI_MODEL` | Override the model (default `gpt-4o-mini`) |
+| `OPENAI_MODEL` | Override the model (default `gpt-5.5`) |
+| `OPENAI_BASE_URL` | Any OpenAI-compatible provider (default `https://api.openai.com/v1`) |
+| `OPENAI_REASONING_EFFORT` | `low`/`medium`/`high`, reasoning models only (default `low`) |
 
 ## The translation pipeline
 

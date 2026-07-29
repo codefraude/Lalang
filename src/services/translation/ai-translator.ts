@@ -1,6 +1,7 @@
 import type { Language, Register } from "@/types/translation";
 import { LANGUAGE_META, REGISTER_META } from "@/types/translation";
 import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/translation-cache";
+import { aiApiKey, aiModel, authHeaders, chatCompletionsUrl, samplingParams } from "@/services/ai/provider";
 
 /**
  * AI translation stage.
@@ -19,7 +20,8 @@ import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/tran
  *   - OpenRouter    OPENAI_BASE_URL=https://openrouter.ai/api/v1
  *   - Mistral       OPENAI_BASE_URL=https://api.mistral.ai/v1
  *   - Ollama (local, no key needed by the server) OPENAI_BASE_URL=http://localhost:11434/v1
- * Set `OPENAI_MODEL` to a model the chosen provider offers.
+ * Set `OPENAI_MODEL` to a model the chosen provider offers. Endpoint, model and
+ * per-model body shape all come from `@/services/ai/provider`.
  */
 
 export interface AiTranslation {
@@ -35,7 +37,6 @@ interface AiInput {
   guidance: string;
 }
 
-const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const TIMEOUT_MS = 15_000;
 
 function buildSystemPrompt(target: Language, register: Register): string {
@@ -62,10 +63,10 @@ function buildSystemPrompt(target: Language, register: Register): string {
 export async function translateWithAi(
   input: AiInput,
 ): Promise<AiTranslation | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = aiApiKey();
   if (!apiKey) return null;
 
-  const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+  const model = aiModel();
 
   // Identical inputs always translate the same way — serve them from cache
   // instead of re-calling (and re-billing) the model.
@@ -79,8 +80,7 @@ export async function translateWithAi(
   const cached = await getCachedTranslation(key);
   if (cached) return cached;
 
-  const baseUrl = (process.env.OPENAI_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
-  const endpoint = `${baseUrl}/chat/completions`;
+  const endpoint = chatCompletionsUrl();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
@@ -88,13 +88,10 @@ export async function translateWithAi(
     const response = await fetch(endpoint, {
       method: "POST",
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers: authHeaders(apiKey),
       body: JSON.stringify({
         model,
-        temperature: 0.3,
+        ...samplingParams(model, 0.3),
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: buildSystemPrompt(input.target, input.register) },

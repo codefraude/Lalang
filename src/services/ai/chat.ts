@@ -5,11 +5,12 @@
  * can degrade gracefully.
  */
 
-const DEFAULT_BASE_URL = "https://api.openai.com/v1";
+import { aiApiKey, aiModel, authHeaders, chatCompletionsUrl, samplingParams } from "./provider";
+
 const TIMEOUT_MS = 20_000;
 
 export function aiConfigured(): boolean {
-  return Boolean(process.env.OPENAI_API_KEY);
+  return Boolean(aiApiKey());
 }
 
 export interface ChatOptions {
@@ -20,22 +21,21 @@ export interface ChatOptions {
 }
 
 export async function chatComplete(opts: ChatOptions): Promise<string | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = aiApiKey();
   if (!apiKey) return null;
 
-  const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-  const baseUrl = (process.env.OPENAI_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const model = aiModel();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
+    const response = await fetch(chatCompletionsUrl(), {
       method: "POST",
       signal: controller.signal,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      headers: authHeaders(apiKey),
       body: JSON.stringify({
         model,
-        temperature: opts.temperature ?? 0.4,
+        ...samplingParams(model, opts.temperature ?? 0.4),
         ...(opts.json ? { response_format: { type: "json_object" } } : {}),
         messages: [
           { role: "system", content: opts.system },

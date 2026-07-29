@@ -1,5 +1,6 @@
 import type { Language, Register } from "@/types/translation";
 import { LANGUAGE_META, REGISTER_META } from "@/types/translation";
+import { aiApiKey, aiModel, authHeaders, chatCompletionsUrl, samplingParams } from "@/services/ai/provider";
 
 /**
  * Streaming AI translation.
@@ -13,7 +14,6 @@ import { LANGUAGE_META, REGISTER_META } from "@/types/translation";
  * pipeline's cultural-adaptation stage still attaches a register-based one.
  */
 
-const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const TIMEOUT_MS = 30_000;
 
 interface StreamInput {
@@ -46,23 +46,22 @@ export async function streamAiTranslation(
   input: StreamInput,
   onDelta: (delta: string) => void,
 ): Promise<string | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = aiApiKey();
   if (!apiKey) return null;
 
-  const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-  const baseUrl = (process.env.OPENAI_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const model = aiModel();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   let full = "";
   try {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
+    const response = await fetch(chatCompletionsUrl(), {
       method: "POST",
       signal: controller.signal,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      headers: authHeaders(apiKey),
       body: JSON.stringify({
         model,
-        temperature: 0.3,
+        ...samplingParams(model, 0.3),
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt(input.target, input.register, input.guidance) },

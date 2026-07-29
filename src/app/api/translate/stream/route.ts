@@ -9,6 +9,7 @@ import { translateWithDictionary } from "@/services/translation/dictionary-fallb
 import { correctGrammar } from "@/services/translation/grammar-correction";
 import { adaptCulturally } from "@/services/translation/cultural-adaptation";
 import { cacheKey, getCachedTranslation, setCachedTranslation } from "@/lib/translation-cache";
+import { aiApiKey, aiModel } from "@/services/ai/provider";
 import type { Language, Register, TranslationEngine } from "@/types/translation";
 
 export const runtime = "nodejs";
@@ -70,10 +71,10 @@ export async function POST(req: Request) {
       let engine: TranslationEngine = "dictionary";
       let culturalNote: string | undefined;
 
-      const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+      const model = aiModel();
       const key = cacheKey({ model, source, target, register, text });
 
-      if (process.env.OPENAI_API_KEY) {
+      if (aiApiKey()) {
         const cached = await getCachedTranslation(key);
         if (cached) {
           fullText = cached.text;
