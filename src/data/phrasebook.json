@@ -9,7 +9,7 @@
   {
     "en": "what's up",
     "fr": "quoi de neuf",
-    "mfe": "ki pe fer",
+    "mfe": "ki pe dir",
     "register": "slang",
     "level": "advanced",
     "note": "Casual greeting between friends, not used with elders or strangers."
@@ -17,7 +17,7 @@
   {
     "en": "how are you",
     "fr": "comment vas-tu",
-    "mfe": "kouma to ete",
+    "mfe": "Ki manier",
     "register": "casual",
     "level": "beginner"
   },
@@ -84,7 +84,7 @@
   {
     "en": "please",
     "fr": "s'il te plaît",
-    "mfe": "siouple",
+    "mfe": "silteple",
     "level": "beginner"
   },
   {
